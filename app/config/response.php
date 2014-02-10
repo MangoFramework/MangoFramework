@@ -6,6 +6,9 @@ return array(
     'eraseBuffer' => false,
     'REST' => array(
         'type' => 'json'
-    )
+    ),
+    'dieAfterResponse' => false,
+    'createXmlFile' => null,
+    'replaceBody' => true
 );
 
