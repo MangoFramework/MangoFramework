@@ -35,7 +35,6 @@ class Rest extends Controller
 
     public function get($id)
     {
-        self::$response->setType('json');
         $class = self::$class;
         $result = $class::find($id);
 
@@ -56,7 +55,6 @@ class Rest extends Controller
 
     public function post()
     {
-        self::$response->setType('json');
         $post = App::$container['post'];
         $class = self::$class;
         $object = new $class();
@@ -97,7 +95,6 @@ class Rest extends Controller
 
     public function put($id)
     {
-        self::$response->setType('json');
         $post = App::$container['post'];
         $class = self::$class;
         $result = $class::find($id);
@@ -142,7 +139,6 @@ class Rest extends Controller
 
     public function delete($id)
     {
-        self::$response->setType('json');
         $class = self::$class;
         $result = $class::find($id);
 
