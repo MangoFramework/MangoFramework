@@ -8,4 +8,4 @@ Documentation for the entire framework can be found on the [Mango website](http:
 
 ### License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+The Mango Framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
