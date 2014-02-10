@@ -4,7 +4,7 @@ Mango est un framework MVC d’API RESTful, il permet la mise en place rapide et
 
 ## Official Documentation
 
-Documentation for the entire framework can be found on the [Mango website](http://mango-framework.com/doc/).
+Documentation for the entire framework can be found on the [Mango website](http://mango-framework.com/documentation.html).
 
 
 ### License
