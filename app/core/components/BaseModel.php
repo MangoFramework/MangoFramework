@@ -13,8 +13,11 @@ abstract class BaseModel extends Model
         $schemaManager = App::$container['Database']->getSchemaManager();
         $listTableColumns = $schemaManager->listTableColumns($table);
 
-        if (!array_key_exists('created_at', $listTableColumns) || !array_key_exists('updated_at', $listTableColumns))
+/*        if (!array_key_exists('created_at', $listTableColumns) || !array_key_exists('updated_at', $listTableColumns))
             $this->timestamps = false;
+
+        if (!array_key_exists('deleted_at', $listTableColumns))
+            $this->softDelete = false;*/
 
     }
 }

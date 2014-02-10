@@ -39,6 +39,8 @@ abstract class Rest extends Controller
     public function get($id)
     {
         $class = self::$class;
+        try
+        {
         $result = $class::find($id);
 
         if (!is_object($result)) {
@@ -50,6 +52,16 @@ abstract class Rest extends Controller
             );
         } else {
             $data = $result->getAttributes();
+        }
+        }
+        catch(QueryException $e)
+        {
+            $data = array(
+                'state' => 'unsucceful',
+                'controller' => self::$controller,
+                'method' => self::getMethod(__METHOD__),
+                'Exception message' => $e->getMessage()
+            );
         }
 
         // set the response data default
@@ -101,6 +113,8 @@ abstract class Rest extends Controller
     {
         $post = self::$inputs;
         $class = self::$class;
+
+        try {
         $object = $class::find($id);
 
         if (!is_object($object)) {
@@ -128,7 +142,7 @@ abstract class Rest extends Controller
                 }
             }
 
-            try {
+
                 $object->save();
                 return array(
                     'state' => 'succeful',
@@ -136,7 +150,9 @@ abstract class Rest extends Controller
                     'method' => self::getMethod(__METHOD__),
                     'id' => $object->getAttributes()['id']
                 );
-            } catch (QueryException $e) {
+            }
+        }
+        catch (QueryException $e) {
                 return array(
                     'state' => 'unsucceful',
                     'controller' => self::$controller,
@@ -144,13 +160,14 @@ abstract class Rest extends Controller
                     'Exception message' => $e->getMessage()
                 );
             }
-            
-        }
+
     }
 
     public function delete($id)
     {
         $class = self::$class;
+        try
+        {
         $result = $class::find($id);
 
         if (!is_object($result)) {
@@ -161,14 +178,25 @@ abstract class Rest extends Controller
                 'id' => $id
             );
         } else {
-            $result->delete();
-            $data = array(
-                'state' => 'succeful',
-                'controller' => self::$controller,
-                'method' => self::getMethod(__METHOD__),
-                'id' => $id
-            );
+
+                $result->delete();
+                $data = array(
+                    'state' => 'succeful',
+                    'controller' => self::$controller,
+                    'method' => self::getMethod(__METHOD__),
+                    'id' => $id
+                );
+            }
         }
+            catch(QueryException $e)
+            {
+                $data = array(
+                    'state' => 'unsucceful',
+                    'controller' => self::$controller,
+                    'method' => self::getMethod(__METHOD__),
+                    'Exception message' => $e->getMessage()
+                );
+            }
 
         return $data;
     }
