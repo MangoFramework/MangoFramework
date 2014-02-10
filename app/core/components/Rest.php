@@ -56,7 +56,7 @@ abstract class Rest extends Controller
 
     public function post()
     {
-        $post = App::$container['post'];
+        $post = $this->inputs;
         $class = $this->class;
         $object = new $class();
         $table = str_replace('models\\', '', strtolower($class) . 's');
@@ -96,12 +96,12 @@ abstract class Rest extends Controller
 
     public function put($id)
     {
-        $post = App::$container['post'];
+        $post = $this->inputs;
         $class = $this->class;
-        $result = $class::find($id);
+        $object = $class::find($id);
         $data = array();
 
-        if (!is_object($result)) {
+        if (!is_object($object)) {
             $data = array(
                 'state' => 'Not Found',
                 'controller' => $this->controller,
@@ -122,17 +122,27 @@ abstract class Rest extends Controller
                         'attribute' => $column
                     );
                 } else {
-                    $result->$column = $value;
+                    $object->$column = $value;
                 }
             }
 
-            $data = array(
-                'state' => 'succeful',
-                'controller' => $this->controller,
-                'method' => self::getMethod(__METHOD__),
-                'id' => $result->getAttributes()['id']
-            );
-            $result->save();
+            try {
+                $object->save();
+                return array(
+                    'state' => 'succeful',
+                    'controller' => $this->controller,
+                    'method' => self::getMethod(__METHOD__),
+                    'id' => $object->getAttributes()['id']
+                );
+            } catch (QueryException $e) {
+                return array(
+                    'state' => 'unsucceful',
+                    'controller' => $this->controller,
+                    'method' => self::getMethod(__METHOD__),
+                    'Exception message' => $e->getMessage()
+                );
+            }
+
         }
 
         return $data;

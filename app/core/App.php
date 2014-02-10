@@ -92,7 +92,6 @@ class App
 
     public static function response()
     {
-
         // with die at TRUE and erasePrevBuffer at TRUE the buffer will contain only this response
         // if not all old or/and next content in buffer will be append
         $params = array(

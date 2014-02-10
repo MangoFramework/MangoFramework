@@ -15,5 +15,6 @@ abstract class BaseModel extends Model
 
         if (!array_key_exists('created_at', $listTableColumns) || !array_key_exists('updated_at', $listTableColumns))
             $this->timestamps = false;
+
     }
 }

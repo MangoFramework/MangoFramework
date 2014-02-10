@@ -16,8 +16,6 @@ class Builder
 
 namespace controllers;
 use core\components\Rest;
-use core\App;
-use core\Container;
 use models\\$model;
 
 class $class extends Rest
@@ -106,7 +104,8 @@ namespace models;
 use core\components\BaseModel;
 
 class $class extends BaseModel{
-    protected \$softDelete = true;
+    //protected \$softDelete = true;
+    //protected \$timestamps = true;
 }
 EOT;
 
