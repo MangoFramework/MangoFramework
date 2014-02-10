@@ -1,7 +1,6 @@
 <?php
 
 namespace core;
-use factories\UserFactory;
 use core\components\Database;
 
 class ContainerException extends \Exception
