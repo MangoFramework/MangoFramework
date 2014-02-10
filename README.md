@@ -1,4 +1,7 @@
-toxicFramework
-==============
+## Mango PHP Framework
 
-framework for supinternet php project
+
+
+## Official Documentation
+
+Documentation for the entire framework can be found on the [Mango website](http://www.baptiste-gios.fr/travaux/Mango/documentation.html).
