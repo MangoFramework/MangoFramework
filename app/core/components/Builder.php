@@ -16,7 +16,7 @@ class Builder
 
 namespace controllers;
 use core\components\Rest;
-use models\\$model;
+use models;
 
 class $class extends Rest
 {

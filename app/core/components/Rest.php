@@ -3,17 +3,19 @@
 namespace core\components;
 
 use Illuminate\Database\QueryException;
-
 use core\App;
 use models;
 
 abstract class Rest extends Controller
 {
 
-    public function __construct()
+    public function beforeProc()
     {
-        parent::__construct();
-        $this->response->setType('json');
+        parent::beforeProc();
+        $responseConfig = App::$container['Config']->getResponse();
+        $restConfig = $responseConfig['REST']['type'];
+        if(!empty($restConfig))
+            self::$response->setType($restConfig);
     }
 
     private function getMethod($const)
@@ -26,23 +28,23 @@ abstract class Rest extends Controller
 
     public function index()
     {
-        $class = $this->class;
+        $class = self::$class;
         $DB = App::$container['Database']->getConnection();
         $table = strtolower(str_replace('models\\','',$class)).'s';
-        $index = $DB->table($table)->select('*')->get();
+        $data = $DB->table($table)->select('*')->get();
 
-        return $index;
+        return $data;
     }
 
     public function get($id)
     {
-        $class = $this->class;
+        $class = self::$class;
         $result = $class::find($id);
 
         if (!is_object($result)) {
             $data = array(
                 'state' => 'Not Found',
-                'controller' => $this->controller,
+                'controller' => self::$controller,
                 'method' => self::getMethod(__METHOD__),
                 'id' => $id
             );
@@ -56,8 +58,8 @@ abstract class Rest extends Controller
 
     public function post()
     {
-        $post = $this->inputs;
-        $class = $this->class;
+        $post = self::$inputs;
+        $class = self::$class;
         $object = new $class();
         $table = str_replace('models\\', '', strtolower($class) . 's');
         $schemaManager = App::$container['Database']->getSchemaManager();
@@ -67,7 +69,7 @@ abstract class Rest extends Controller
             if (!array_key_exists($column, $listTableColumns)) {
                 return array(
                     'state' => 'attribute not found',
-                    'controller' => $this->controller,
+                    'controller' => self::$controller,
                     'method' => self::getMethod(__METHOD__),
                     'attribute' => $column
                 );
@@ -78,33 +80,33 @@ abstract class Rest extends Controller
 
         try {
             $object->save();
-            return array(
+            $data = array(
                 'state' => 'succeful',
-                'controller' => $this->controller,
+                'controller' => self::$controller,
                 'method' => self::getMethod(__METHOD__),
                 'id' => $object->getAttributes()['id']
             );
         } catch (QueryException $e) {
-            return array(
+            $data = array(
                 'state' => 'unsucceful',
-                'controller' => $this->controller,
+                'controller' => self::$controller,
                 'method' => self::getMethod(__METHOD__),
                 'Exception message' => $e->getMessage()
             );
         }
+        return $data;
     }
 
     public function put($id)
     {
-        $post = $this->inputs;
-        $class = $this->class;
+        $post = self::$inputs;
+        $class = self::$class;
         $object = $class::find($id);
-        $data = array();
 
         if (!is_object($object)) {
-            $data = array(
+            return array(
                 'state' => 'Not Found',
-                'controller' => $this->controller,
+                'controller' => self::$controller,
                 'method' => self::getMethod(__METHOD__),
                 'id' => $id
             );
@@ -117,7 +119,7 @@ abstract class Rest extends Controller
                 if (!array_key_exists($column, $listTableColumns)) {
                     return array(
                         'state' => 'attribute not found',
-                        'controller' => $this->controller,
+                        'controller' => self::$controller,
                         'method' => self::getMethod(__METHOD__),
                         'attribute' => $column
                     );
@@ -130,33 +132,31 @@ abstract class Rest extends Controller
                 $object->save();
                 return array(
                     'state' => 'succeful',
-                    'controller' => $this->controller,
+                    'controller' => self::$controller,
                     'method' => self::getMethod(__METHOD__),
                     'id' => $object->getAttributes()['id']
                 );
             } catch (QueryException $e) {
                 return array(
                     'state' => 'unsucceful',
-                    'controller' => $this->controller,
+                    'controller' => self::$controller,
                     'method' => self::getMethod(__METHOD__),
                     'Exception message' => $e->getMessage()
                 );
             }
-
+            
         }
-
-        return $data;
     }
 
     public function delete($id)
     {
-        $class = $this->class;
+        $class = self::$class;
         $result = $class::find($id);
 
         if (!is_object($result)) {
             $data = array(
                 'state' => 'Not Found',
-                'controller' => $this->controller,
+                'controller' => self::$controller,
                 'method' => self::getMethod(__METHOD__),
                 'id' => $id
             );
@@ -164,7 +164,7 @@ abstract class Rest extends Controller
             $result->delete();
             $data = array(
                 'state' => 'succeful',
-                'controller' => $this->controller,
+                'controller' => self::$controller,
                 'method' => self::getMethod(__METHOD__),
                 'id' => $id
             );
@@ -176,7 +176,7 @@ abstract class Rest extends Controller
     public function complexe()
     {
         self::$response->setType('json');
-        $class = $this->class;
+        $class = self::$class;
         $options = App::$container['ComplexeOptions'];
         $first = true;
         $models = array();
@@ -239,82 +239,7 @@ abstract class Rest extends Controller
 
         $models = $DB->select($query);
 
-        self::$response->setData($models, 'default');
-
+        return $models;
     }
 
-    public function complexei()
-    {
-        self::$response->setType('json');
-        $class = $this->class;
-        $options = App::$container['ComplexeOptions'];
-        $first = true;
-        $models = array();
-        $DB = App::$container['Database']->getConnection();
-        $operators = array(
-            '<=','>=','<','>','='
-        );
-
-        foreach($options as $option)
-        {
-            if($option['action'] == 'occur' && $option['cond'][0] == '='){
-                if($first){
-                    $model = $class::where($option['column'],$option['cond'][0],substr($option['cond'],1));
-
-                }
-                else{
-                    $model = $model->where($option['column'],$option['cond'][0],substr($option['cond'],1));
-                }
-                $first = false;
-            }
-            else if($option['action'] == 'occur' && $option['cond'][0] == '~'){
-                if($first){
-                    $model = $class::where($option['column'],'LIKE','%'.substr($option['cond'],1).'%');
-
-                }
-                else{
-                    $model = $model->where($option['column'],'LIKE','%'.substr($option['cond'],1).'%');
-                }
-                $first = false;
-            }
-            else if($option['action'] == 'length'){
-                if($first){
-                    $model = $class::whereRaw('CHAR_LENGTH('.$option['column'].') '.$option['cond'][0].' '.substr($option['cond'],1));
-
-                }
-                else{
-                    $model = $model->whereRaw('CHAR_LENGTH('.$option['column'].') '.$option['cond'][0].' '.substr($option['cond'],1));
-                }
-                $first = false;
-            }
-            else if($option['action'] == 'compare'){
-
-                $i =0;
-                $myOp = $operators[$i];
-                while(strpos($option['cond'],$operators[$i]) === false)
-                {
-                    $i++;
-                    $myOp = $operators[$i];
-                }
-
-                if($first){
-                    $model = $class::where($option['column'],$myOp,str_replace($myOp,'',$option['cond']));
-
-                }
-                else{
-                    $model = $model->where($option['column'],$myOp,str_replace($myOp,'',$option['cond']));
-                }
-                $first = false;
-            }
-        }
-        $model = $model->get();
-
-        foreach ($model as $object)
-        {
-            $models[] = $object->getAttributes();
-        }
-
-        self::$response->setData($models, 'default');
-
-    }
 }

@@ -1,22 +1,21 @@
 <?php
 
 namespace core\components;
-
 use core\App;
 
 abstract class Controller
 {
-    protected $controller;
-    protected $class;
-    protected $response;
-    protected $inputs;
+    protected static $controller;
+    protected static $class;
+    protected static $inputs;
+    public static $response;
 
-    public function __construct()
+    public function beforeProc()
     {
-        $this->inputs = App::$container['inputs'];
-        $this->response = App::$container['Response'];
-        $this->controller = strtolower(str_replace('Controller', '', str_replace('controllers\\', '', get_called_class())));
-        $this->class = 'models\\' . str_replace('Controller', '', str_replace('controllers\\', '', get_called_class()));
+        self::$controller = strtolower(str_replace('Controller', '', str_replace('controllers\\', '', get_called_class())));
+        self::$class = 'models\\' . str_replace('Controller', '', str_replace('controllers\\', '', get_called_class()));
+        self::$inputs = App::$container['inputs'];
+        self::$response = App::$container['Response'];
     }
 
     public function routingTo($route)

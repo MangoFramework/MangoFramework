@@ -62,7 +62,6 @@ class App
                     self::$container['Blueprint']->type = 'physical';
 
                 if (self::$container['Blueprint']->isRest()) {
-                    self::$container['Router']->beforeRestRouting();
                     self::$container['Router']->restRouting();
                     self::$container['Blueprint']->lockRouter = true;
                 }
@@ -74,6 +73,7 @@ class App
 
             if (self::$container['Blueprint']->exist['logic'] || self::$container['Blueprint']->exist['physical']) {
                 try {
+                    //unset(self::$container['Response']);
                     self::$container['Response']->setData(self::$container['Router']->execute());
                 } catch (RouterException $e) {
                     // bad route for this controller !

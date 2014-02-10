@@ -3,6 +3,9 @@
 return array(
     'type' => 'html',
     'prettyPrintJSON' => true,
-    'eraseBuffer' => false
+    'eraseBuffer' => false,
+    'REST' => array(
+        'type' => 'json'
+    )
 );
 

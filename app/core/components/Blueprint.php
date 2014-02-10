@@ -84,8 +84,8 @@ class Blueprint
             $class = 'controllers\\' . $this->controller;
             $controller = new $class();
 
-            if (method_exists($controller, 'index')) {
-                $this->method = 'index';
+            if (method_exists($controller, 'show')) {
+                $this->method = 'show';
                 return true;
             }
         }
