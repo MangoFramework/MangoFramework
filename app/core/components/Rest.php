@@ -7,12 +7,13 @@ use Illuminate\Database\QueryException;
 use core\App;
 use models;
 
-class Rest extends Controller
+abstract class Rest extends Controller
 {
 
-    public function beforeRest()
+    public function __construct()
     {
-        self::$response->setType('json');
+        parent::__construct();
+        $this->response->setType('json');
     }
 
     private function getMethod($const)
@@ -25,7 +26,7 @@ class Rest extends Controller
 
     public function index()
     {
-        $class = self::$class;
+        $class = $this->class;
         $DB = App::$container['Database']->getConnection();
         $table = strtolower(str_replace('models\\','',$class)).'s';
         $index = $DB->table($table)->select('*')->get();
@@ -35,13 +36,13 @@ class Rest extends Controller
 
     public function get($id)
     {
-        $class = self::$class;
+        $class = $this->class;
         $result = $class::find($id);
 
         if (!is_object($result)) {
             $data = array(
                 'state' => 'Not Found',
-                'controller' => self::$controller,
+                'controller' => $this->controller,
                 'method' => self::getMethod(__METHOD__),
                 'id' => $id
             );
@@ -56,7 +57,7 @@ class Rest extends Controller
     public function post()
     {
         $post = App::$container['post'];
-        $class = self::$class;
+        $class = $this->class;
         $object = new $class();
         $table = str_replace('models\\', '', strtolower($class) . 's');
         $schemaManager = App::$container['Database']->getSchemaManager();
@@ -66,7 +67,7 @@ class Rest extends Controller
             if (!array_key_exists($column, $listTableColumns)) {
                 return array(
                     'state' => 'attribute not found',
-                    'controller' => self::$controller,
+                    'controller' => $this->controller,
                     'method' => self::getMethod(__METHOD__),
                     'attribute' => $column
                 );
@@ -79,14 +80,14 @@ class Rest extends Controller
             $object->save();
             return array(
                 'state' => 'succeful',
-                'controller' => self::$controller,
+                'controller' => $this->controller,
                 'method' => self::getMethod(__METHOD__),
                 'id' => $object->getAttributes()['id']
             );
         } catch (QueryException $e) {
             return array(
                 'state' => 'unsucceful',
-                'controller' => self::$controller,
+                'controller' => $this->controller,
                 'method' => self::getMethod(__METHOD__),
                 'Exception message' => $e->getMessage()
             );
@@ -96,14 +97,14 @@ class Rest extends Controller
     public function put($id)
     {
         $post = App::$container['post'];
-        $class = self::$class;
+        $class = $this->class;
         $result = $class::find($id);
         $data = array();
 
         if (!is_object($result)) {
             $data = array(
                 'state' => 'Not Found',
-                'controller' => self::$controller,
+                'controller' => $this->controller,
                 'method' => self::getMethod(__METHOD__),
                 'id' => $id
             );
@@ -116,7 +117,7 @@ class Rest extends Controller
                 if (!array_key_exists($column, $listTableColumns)) {
                     return array(
                         'state' => 'attribute not found',
-                        'controller' => self::$controller,
+                        'controller' => $this->controller,
                         'method' => self::getMethod(__METHOD__),
                         'attribute' => $column
                     );
@@ -127,7 +128,7 @@ class Rest extends Controller
 
             $data = array(
                 'state' => 'succeful',
-                'controller' => self::$controller,
+                'controller' => $this->controller,
                 'method' => self::getMethod(__METHOD__),
                 'id' => $result->getAttributes()['id']
             );
@@ -139,13 +140,13 @@ class Rest extends Controller
 
     public function delete($id)
     {
-        $class = self::$class;
+        $class = $this->class;
         $result = $class::find($id);
 
         if (!is_object($result)) {
             $data = array(
                 'state' => 'Not Found',
-                'controller' => self::$controller,
+                'controller' => $this->controller,
                 'method' => self::getMethod(__METHOD__),
                 'id' => $id
             );
@@ -153,7 +154,7 @@ class Rest extends Controller
             $result->delete();
             $data = array(
                 'state' => 'succeful',
-                'controller' => self::$controller,
+                'controller' => $this->controller,
                 'method' => self::getMethod(__METHOD__),
                 'id' => $id
             );
@@ -165,7 +166,7 @@ class Rest extends Controller
     public function complexe()
     {
         self::$response->setType('json');
-        $class = self::$class;
+        $class = $this->class;
         $options = App::$container['ComplexeOptions'];
         $first = true;
         $models = array();
@@ -235,7 +236,7 @@ class Rest extends Controller
     public function complexei()
     {
         self::$response->setType('json');
-        $class = self::$class;
+        $class = $this->class;
         $options = App::$container['ComplexeOptions'];
         $first = true;
         $models = array();

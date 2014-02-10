@@ -22,7 +22,11 @@ $console
     ->setCode(function (InputInterface $input, OutputInterface $output) {
 
       if($input->getArgument('ormCommand') == 'generate'){
+        $responseDefault = 'Error database config';
         exec('"vendors/bin/phpmig" '.$input->getArgument('ormCommand').' '.$input->getArgument('option'),$response);
+
+        if(empty($response))
+            $response = $responseDefault;
 
       }
       elseif($input->getArgument('ormCommand') == 'migrate'){

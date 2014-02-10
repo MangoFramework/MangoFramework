@@ -1,8 +1,14 @@
 <?php
 
 return array(
-    'folders' => array(
-        'controllers',
-        'factories'
+    array(
+        'folders' => array(
+            'controllers',
+            'factories'
+        ),
+    ),
+    array(
+        'route' => '/documentation',
+        'file' => 'doc.php'
     )
 );

@@ -2,3 +2,8 @@
 vendors/
 composer.lock
 composer.phar
+app/config/
+app/controllers/
+app/factories/
+app/utils/list.php
+migrations/

@@ -24,7 +24,7 @@ class Container extends \Pimple
     public function __construct()
     {
         parse_str(file_get_contents("php://input"), $post_vars);
-        $this['post'] = $post_vars;
+        $this['inputs'] = $post_vars;
         $this['dependencies'] = array(
             'Config' => __NAMESPACE__ . '\components\Config',
             'Request' => __NAMESPACE__ . '\components\Request',

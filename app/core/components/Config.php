@@ -9,4 +9,10 @@ class Config
         $config = include('./config/response.php');
         return $config;
     }
+
+    public function getDocGen()
+    {
+        $config = include('./config/docgen.php');
+        return $config;
+    }
 }

@@ -6,15 +6,17 @@ use core\App;
 
 abstract class Controller
 {
-    protected static $controller;
-    protected static $class;
-    protected  static $response;
+    protected $controller;
+    protected $class;
+    protected $response;
+    protected $inputs;
 
-    public function beforeMain()
+    public function __construct()
     {
-        self::$controller = strtolower(str_replace('Controller', '', str_replace('controllers\\', '', get_called_class())));
-        self::$class = 'models\\' . str_replace('Controller', '', str_replace('controllers\\', '', get_called_class()));
-        self::$response = App::$container['Response'];
+        $this->inputs = App::$container['inputs'];
+        $this->response = App::$container['Response'];
+        $this->controller = strtolower(str_replace('Controller', '', str_replace('controllers\\', '', get_called_class())));
+        $this->class = 'models\\' . str_replace('Controller', '', str_replace('controllers\\', '', get_called_class()));
     }
 
     public function routingTo($route)
