@@ -4,6 +4,8 @@ namespace core\components;
 
 use core\app;
 
+class ResponseException extends \Exception {}
+
 class Response
 {
     protected $status = NULL;
@@ -13,11 +15,11 @@ class Response
     protected $type = 'json';
     protected $data = NULL;
     protected $defaultData;
-    protected $errorData = NULL;
-
-    public $eraseBuffer = FALSE;
-    public $encodedErrorData = TRUE;
-    public $prettyPrint = FALSE;
+    protected $errorData = FALSE;
+    protected $prettyPrint = FALSE;
+    protected $escapeSlashes = TRUE;
+    protected $eraseBuffer = FALSE;
+    protected $encodedErrorData = TRUE;
 
     protected $validType = array(
         "json",
@@ -132,10 +134,10 @@ class Response
                         self::$statusCodes[$kcode] = $message;
                     }
                 } else {
-                    Throw New \Exception('Invalid var type : $code must be an array in this case');
+                    Throw New \ResponseException('Invalid var type : $code must be an array in this case');
                 }
             } else {
-                Throw New \Exception('Invalid status code');
+                Throw New \ResponseException('Invalid status code');
             }
         }
 
@@ -162,7 +164,7 @@ class Response
         return $this;
     }
 
-    public function setData($data,$type = null)
+    public function setData($data = null,$type = null)
     {
         if ($type === 'default') {
             $this->defaultData = $data;
@@ -180,6 +182,20 @@ class Response
         return $this;
     }
 
+    public function setEscapeSlashes($bool)
+    {
+        $this->escapeSlashes = $bool;
+
+        return $this;
+    }
+
+    public function setEraseBuffer($bool)
+    {
+        $this->eraseBuffer = $bool;
+
+        return $this;
+    }
+
     public function getStatus($code = NULL, $messageOnly = FALSE)
     {
         if (is_null($code)) {
@@ -190,7 +206,7 @@ class Response
             if (array_key_exists($code, self::$statusCodes)) {
                 return self::$statusCodes[$code];
             } else {
-                Throw New \Exception('Invalid status code');
+                Throw New \ResponseException('Invalid status code');
             }
         } else {
             return $code;
@@ -246,7 +262,7 @@ class Response
             case 'serverError':
                 return $this->status >= 500 && $this->status < 600;
             default:
-                Throw new \Exception('Invalid var value');
+                Throw new \ResponseException('Invalid var $type value: check "is" method to have the list');
         }
     }
 
@@ -295,17 +311,29 @@ class Response
 
             return $simpleXmlElement->asXML();
         } else {
-            foreach ($data as $key => $value) {
-                if (is_array($value)) {
-                    if (!is_numeric($key)) {
-                        $node = $simpleXmlElement->addChild($key);
-                        $this->xmlEncode($value, $node, $file);
+            if (is_array($data)) {
+                foreach ($data as $key => $value) {
+                    if (is_array($value)) {
+                        if (!is_numeric($key)) {
+                            $node = $simpleXmlElement->addChild($key);
+                            $this->xmlEncode($value, $node, $file);
+                        } else {
+                            $node = $simpleXmlElement->addChild('item' . $key);
+                            $this->xmlEncode($value, $node, $file);
+                        }
                     } else {
-                        $node = $simpleXmlElement->addChild('item' . $key);
-                        $this->xmlEncode($value, $node, $file);
+                        if (!is_numeric($key)) {
+                            $simpleXmlElement->addChild($key, $value);
+                        } else {
+                            $simpleXmlElement->addChild('item' . $key, $value);
+                        }
                     }
+                }
+            } else {
+                if (!is_null($data)) {
+                    $simpleXmlElement->addChild('item', $data);
                 } else {
-                    $simpleXmlElement->addChild($key, $value);
+                    $simpleXmlElement->addChild('item', 'null');
                 }
             }
         }
@@ -313,10 +341,18 @@ class Response
 
     public function jsonEncodeUTF8($data)
     {
-        if ($this->prettyPrint === TRUE) {
-            $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT | JSON_PRETTY_PRINT);
-        } else {
-            $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT);
+        if ($this->prettyPrint === TRUE && $this->escapeSlashes === TRUE) {
+            $json = json_encode($data, JSON_UNESCAPED_UNICODE |
+                JSON_FORCE_OBJECT |
+                JSON_PRETTY_PRINT |
+                JSON_UNESCAPED_SLASHES);
+        } else if ($this->escapeSlashes === TRUE) {
+            $json = json_encode($data, JSON_UNESCAPED_UNICODE |
+                JSON_FORCE_OBJECT |
+                JSON_UNESCAPED_SLASHES);
+        } else if ($this->prettyPrint === FALSE && $this->escapeSlashes === FALSE) {
+            $json = json_encode($data, JSON_UNESCAPED_UNICODE |
+                JSON_FORCE_OBJECT);
         }
 
         return $json;
@@ -333,8 +369,8 @@ class Response
     {
         header(
             $_SERVER['SERVER_PROTOCOL'] .
-            ' ' . $this->status .
-            ' ' . self::$statusCodes[$this->status],
+                ' ' . $this->status .
+                ' ' . self::$statusCodes[$this->status],
             TRUE,
             $this->status
         );
@@ -378,8 +414,9 @@ class Response
             "code" => 200,
             "encode" => TRUE,
             "replace" => TRUE,
-            "die" => TRUE,
-            "xmlFile" => NULL
+            "die" => FALSE,
+            "xmlFile" => NULL,
+            "htmlJSONEncode" => TRUE
         );
 
         $this->status = (!is_null($this->status) ? $this->status : $params['code']);
@@ -400,7 +437,7 @@ class Response
         if (in_array($this->type, $this->validType)) {
             $type = $this->type;
         } else {
-            $data = $this->isDataError("Invalid response format : must be 'json', 'xml' or 'html'");
+            Throw new ResponseException("Invalid response format : must be 'json', 'xml' or 'html'");
         }
 
         // encode data
@@ -408,10 +445,12 @@ class Response
             if ($type === 'json') {
                 $encodedData = $this->jsonEncodeUTF8($data);
             } else if ($type === 'html' || $type === 'plain') {
-                if (!is_array($data)) {
-                    $encodedData = $data;
+                if (is_array($data) && $params['htmlJSONEncode'] === TRUE) {
+                    $encodedData = $this->jsonEncodeUTF8($data);
+                } else if (is_array($data) && $params['htmlJSONEncode'] === FALSE) {
+                    Throw new ResponseException('Invalid var type : $data can\'t be an array in html response mode');
                 } else {
-                    $encodedData = $this->isDataError('Invalid var type : $data can\'t be an array in html response mode', 403);
+                    $encodedData = $data;
                 }
             } else if ($type === 'xml') {
                 $encodedData = $this->xmlEncode($data, NULL, $params['xmlFile']);
@@ -435,6 +474,10 @@ class Response
         // stop response if error when xml response type
         if ($this->errorData === TRUE || $type === 'xml') {
             $params['die'] = TRUE;
+        }
+
+        if ($encodedData == 'null') {
+            $encodedData = 'no response';
         }
 
         // send response
