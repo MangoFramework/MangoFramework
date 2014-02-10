@@ -11,4 +11,3 @@ return array(
     'createXmlFile' => null,
     'replaceBody' => true
 );
-
