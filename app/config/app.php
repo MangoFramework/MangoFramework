@@ -16,5 +16,17 @@
 
 return array(
     'providers' => array(
-    )
+    ),
+    //Session drivers : native or database
+    'session' => 'native',
+    //Authentification Configuration, default : 
+    //Model : User
+    //id : id
+    //password : password
+    'auth' => array(
+    	'model' => '',
+    	'id' => 'email',
+    	'password' => ''
+    	'salt' => ''
+	)
 );
