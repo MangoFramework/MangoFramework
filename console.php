@@ -55,4 +55,21 @@ $console
       $output->writeln($response);
     });
 
+$console
+    ->register('generate')
+    ->setDefinition(array(
+        new InputArgument('ctrlCommand', InputArgument::OPTIONAL, 'What Command?'),
+        new InputArgument('option', InputArgument::OPTIONAL, 'What Command?')
+    ))
+    ->setDescription('')
+    ->setHelp('')
+    ->setCode(function (InputInterface $input, OutputInterface $output) {
+        $builder = new \core\components\Builder();
+        if($input->getArgument('ctrlCommand') == 'controller'){
+            $res = $builder->customController($input->getArgument('option'));
+
+            $output->writeln($res);
+        }
+    });
+
 $console->run();

@@ -29,9 +29,28 @@ abstract class Rest extends Controller
     public function index()
     {
         $class = self::$class;
+        $model = new $class();
         $DB = App::$container['Database']->getConnection();
         $table = strtolower(str_replace('models\\', '', $class)) . 's';
-        $data = $DB->table($table)->select('*')->get();
+
+        try
+        {
+            if(!$model->softDelete){
+                $data = $DB->table($table)->select('*')->get();
+            }
+            elseif($model->softDelete){
+                $data = $DB->table($table)->where('deleted_at',null)->get();
+            }
+        }
+        catch(QueryException $e)
+        {
+            $data = array(
+                'success' => false,
+                'message' => $e->getMessage(),
+                'controller' => self::$controller,
+                'method' => self::getMethod(__METHOD__)
+            );
+        }
 
         return $data;
     }
