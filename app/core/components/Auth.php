@@ -10,13 +10,12 @@ Class Auth
 	private $config
 	private $input;
 
-	public function __construct(Session $session,Database $db ,$config)
+	public function __construct(Session $session,Database $db , $input, $config)
 	{
 		$this->session = $session;
 		$this->salt = $salt;
 		$this->db = $db->getConnection();
-		$c = Container::getInstance();
-		$this->input = $c['input'];
+		$this->input = $input;
 	}
 
 	public function login()
@@ -42,6 +41,11 @@ Class Auth
 	public function encrypt($pass)
 	{
 		return sha1(md5($pwd.$this->salt));
+	}
+
+	public function isAuth()
+	{
+		return (!empty($session->getUser()));
 	}
 
 }

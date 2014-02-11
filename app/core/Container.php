@@ -31,7 +31,9 @@ class Container extends \Pimple
             'Router' => __NAMESPACE__ . '\components\Router',
             'Response' => __NAMESPACE__ . '\components\Response',
             'ControllerMap' => __NAMESPACE__ . '\components\ControllerMap',
-            'Database' => __NAMESPACE__ . '\components\Database'
+            'Database' => __NAMESPACE__ . '\components\Database',
+            'Session' => __NAMESPACE__.'\components\Session',
+            'Auth' => __NAMESPACE__.'\components\Auth'
         );
 
         foreach ($this['dependencies'] as $key => $path) {
@@ -78,6 +80,18 @@ class Container extends \Pimple
         $this['Database'] = function () {
             return Database::getInstance();
         };
+
+        // Session
+        $this['Session'] = function ($c) {
+            $config = $c['Config']->getAppConfig();
+            return new $c['dependencies']['Session']($config['session']);
+        }
+
+        // Auth
+        $this['Auth'] = function ($c) {
+            $config = $c['Config']->getAppConfig();
+            return new $c['dependencies']['Auth']($c['Session'], $c['Database'], $c['inputs'], $config['auth']);
+        }
     }
 
     public static function make($name, $args = array())
@@ -93,7 +107,6 @@ class Container extends \Pimple
             $provider = $providers[$name];
             if (!array_key_exists($name, $providers)) {
                 throw new \Exception("No such providers :".$name, 1);
-                return 42;
             }
             else {
                 if(class_exists($provider, true)) {
