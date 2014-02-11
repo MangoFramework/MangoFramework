@@ -7,4 +7,3 @@ app/controllers/
 app/factories/
 app/models/
 app/utils/list.php
-migrations/
