@@ -14,7 +14,7 @@ abstract class Rest extends Controller
         parent::beforeProc();
         $responseConfig = App::$container['Config']->getResponse();
         $restConfig = $responseConfig['REST']['type'];
-        if(!empty($restConfig))
+        if (!empty($restConfig))
             self::$response->setType($restConfig);
     }
 
@@ -29,9 +29,28 @@ abstract class Rest extends Controller
     public function index()
     {
         $class = self::$class;
+        $model = new $class();
         $DB = App::$container['Database']->getConnection();
-        $table = strtolower(str_replace('models\\','',$class)).'s';
-        $data = $DB->table($table)->select('*')->get();
+        $table = strtolower(str_replace('models\\', '', $class)) . 's';
+
+        try
+        {
+            if(!$model->softDelete){
+                $data = $DB->table($table)->select('*')->get();
+            }
+            elseif($model->softDelete){
+                $data = $DB->table($table)->where('deleted_at',null)->get();
+            }
+        }
+        catch(QueryException $e)
+        {
+            $data = array(
+                'success' => false,
+                'message' => $e->getMessage(),
+                'controller' => self::$controller,
+                'method' => self::getMethod(__METHOD__)
+            );
+        }
 
         return $data;
     }
@@ -39,28 +58,27 @@ abstract class Rest extends Controller
     public function get($id)
     {
         $class = self::$class;
-        try
-        {
-        $result = $class::find($id);
+        try {
+            $result = $class::find($id);
 
-        if (!is_object($result)) {
+            if (!is_object($result)) {
+                $data = array(
+                    'success' => false,
+                    'message' => 'id not found',
+                    'controller' => self::$controller,
+                    'method' => self::getMethod(__METHOD__),
+                    'id' => $id
+                );
+            } else {
+                $data = $result->getAttributes();
+            }
+        } catch (QueryException $e) {
             $data = array(
-                'state' => 'Not Found',
+                'success' => false,
+                'message' => $e->getMessage(),
                 'controller' => self::$controller,
                 'method' => self::getMethod(__METHOD__),
                 'id' => $id
-            );
-        } else {
-            $data = $result->getAttributes();
-        }
-        }
-        catch(QueryException $e)
-        {
-            $data = array(
-                'state' => 'unsucceful',
-                'controller' => self::$controller,
-                'method' => self::getMethod(__METHOD__),
-                'Exception message' => $e->getMessage()
             );
         }
 
@@ -80,7 +98,8 @@ abstract class Rest extends Controller
         foreach ($post as $column => $value) {
             if (!array_key_exists($column, $listTableColumns)) {
                 return array(
-                    'state' => 'attribute not found',
+                    'success' => false,
+                    'message' => 'attribute not found',
                     'controller' => self::$controller,
                     'method' => self::getMethod(__METHOD__),
                     'attribute' => $column
@@ -93,17 +112,18 @@ abstract class Rest extends Controller
         try {
             $object->save();
             $data = array(
-                'state' => 'succeful',
+                'success' => true,
+                'message' => 'save successful',
                 'controller' => self::$controller,
                 'method' => self::getMethod(__METHOD__),
                 'id' => $object->getAttributes()['id']
             );
         } catch (QueryException $e) {
             $data = array(
-                'state' => 'unsucceful',
+                'success' => false,
+                'message' => $e->getMessage(),
                 'controller' => self::$controller,
-                'method' => self::getMethod(__METHOD__),
-                'Exception message' => $e->getMessage()
+                'method' => self::getMethod(__METHOD__)
             );
         }
         return $data;
@@ -115,88 +135,89 @@ abstract class Rest extends Controller
         $class = self::$class;
 
         try {
-        $object = $class::find($id);
+            $object = $class::find($id);
 
-        if (!is_object($object)) {
-            return array(
-                'state' => 'Not Found',
-                'controller' => self::$controller,
-                'method' => self::getMethod(__METHOD__),
-                'id' => $id
-            );
-        } else {
-            $table = str_replace('models\\', '', strtolower($class) . 's');
-            $schemaManager = App::$container['Database']->getSchemaManager();
-            $listTableColumns = $schemaManager->listTableColumns($table);
+            if (!is_object($object)) {
+                return array(
+                    'success' => false,
+                    'message' => 'id not found',
+                    'controller' => self::$controller,
+                    'method' => self::getMethod(__METHOD__),
+                    'id' => $id
+                );
+            } else {
+                $table = str_replace('models\\', '', strtolower($class) . 's');
+                $schemaManager = App::$container['Database']->getSchemaManager();
+                $listTableColumns = $schemaManager->listTableColumns($table);
 
-            foreach ($post as $column => $value) {
-                if (!array_key_exists($column, $listTableColumns)) {
-                    return array(
-                        'state' => 'attribute not found',
-                        'controller' => self::$controller,
-                        'method' => self::getMethod(__METHOD__),
-                        'attribute' => $column
-                    );
-                } else {
-                    $object->$column = $value;
+                foreach ($post as $column => $value) {
+                    if (!array_key_exists($column, $listTableColumns)) {
+                        return array(
+                            'success' => false,
+                            'message' => 'attribute not found',
+                            'controller' => self::$controller,
+                            'method' => self::getMethod(__METHOD__),
+                            'attribute' => $column
+                        );
+                    } else {
+                        $object->$column = $value;
+                    }
                 }
-            }
 
 
                 $object->save();
                 return array(
-                    'state' => 'succeful',
+                    'success' => true,
+                    'message' => 'save successful',
                     'controller' => self::$controller,
                     'method' => self::getMethod(__METHOD__),
                     'id' => $object->getAttributes()['id']
                 );
             }
+        } catch (QueryException $e) {
+            return array(
+                'success' => false,
+                'message' => $e->getMessage(),
+                'controller' => self::$controller,
+                'method' => self::getMethod(__METHOD__)
+            );
         }
-        catch (QueryException $e) {
-                return array(
-                    'state' => 'unsucceful',
-                    'controller' => self::$controller,
-                    'method' => self::getMethod(__METHOD__),
-                    'Exception message' => $e->getMessage()
-                );
-            }
 
     }
 
     public function delete($id)
     {
         $class = self::$class;
-        try
-        {
-        $result = $class::find($id);
+        try {
+            $result = $class::find($id);
 
-        if (!is_object($result)) {
-            $data = array(
-                'state' => 'Not Found',
-                'controller' => self::$controller,
-                'method' => self::getMethod(__METHOD__),
-                'id' => $id
-            );
-        } else {
+            if (!is_object($result)) {
+                $data = array(
+                    'success' => false,
+                    'message' => 'id not found',
+                    'controller' => self::$controller,
+                    'method' => self::getMethod(__METHOD__),
+                    'id' => $id
+                );
+            } else {
 
                 $result->delete();
                 $data = array(
-                    'state' => 'succeful',
+                    'success' => true,
+                    'message' => 'delete successful',
                     'controller' => self::$controller,
                     'method' => self::getMethod(__METHOD__),
                     'id' => $id
                 );
             }
+        } catch (QueryException $e) {
+            $data = array(
+                'success' => false,
+                'message' => $e->getMessage(),
+                'controller' => self::$controller,
+                'method' => self::getMethod(__METHOD__)
+            );
         }
-            catch(QueryException $e)
-            {
-                $data = array(
-                    'state' => 'unsucceful',
-                    'controller' => self::$controller,
-                    'method' => self::getMethod(__METHOD__),
-                    'Exception message' => $e->getMessage()
-                );
-            }
 
         return $data;
     }
@@ -209,57 +230,48 @@ abstract class Rest extends Controller
         $first = true;
         $models = array();
         $DB = App::$container['Database']->getConnection();
-        $table = strtolower(str_replace('models\\','',$class)).'s';
-        $query = 'select * from '.$table;
+        $table = strtolower(str_replace('models\\', '', $class)) . 's';
+        $query = 'select * from ' . $table;
         $operators = array(
-            '<=','>=','<','>','='
+            '<=', '>=', '<', '>', '='
         );
 
-        foreach($options as $option)
-        {
-            if($option['action'] == 'occur' && $option['cond'][0] == '='){
-                if($first){
-                    $query .= ' where '.$option['column'].' '.$option['cond'][0].' "'.substr($option['cond'],1).'"';
-                }
-                else{
-                    $query .= ' and '.$option['column'].' '.$option['cond'][0].' "'.substr($option['cond'],1).'"';
+        foreach ($options as $option) {
+            if ($option['action'] == 'occur' && $option['cond'][0] == '=') {
+                if ($first) {
+                    $query .= ' where ' . $option['column'] . ' ' . $option['cond'][0] . ' "' . substr($option['cond'], 1) . '"';
+                } else {
+                    $query .= ' and ' . $option['column'] . ' ' . $option['cond'][0] . ' "' . substr($option['cond'], 1) . '"';
                 }
                 $first = false;
-            }
-            else if($option['action'] == 'occur' && $option['cond'][0] == '~'){
-                if($first){
-                    $query .= ' where '.$option['column'].' LIKE "%'.substr($option['cond'],1).'%"';
-                }
-                else{
-                    $query .= ' and '.$option['column'].' LIKE "%'.substr($option['cond'],1).'%"';
+            } else if ($option['action'] == 'occur' && $option['cond'][0] == '~') {
+                if ($first) {
+                    $query .= ' where ' . $option['column'] . ' LIKE "%' . substr($option['cond'], 1) . '%"';
+                } else {
+                    $query .= ' and ' . $option['column'] . ' LIKE "%' . substr($option['cond'], 1) . '%"';
                 }
                 $first = false;
-            }
-            else if($option['action'] == 'length'){
-                if($first){
-                    $query .= ' where CHAR_LENGTH('.$option['column'].') '.$option['cond'][0].' '.substr($option['cond'],1);
+            } else if ($option['action'] == 'length') {
+                if ($first) {
+                    $query .= ' where CHAR_LENGTH(' . $option['column'] . ') ' . $option['cond'][0] . ' ' . substr($option['cond'], 1);
 
-                }
-                else{
-                    $query .= ' and CHAR_LENGTH('.$option['column'].') '.$option['cond'][0].' '.substr($option['cond'],1);
+                } else {
+                    $query .= ' and CHAR_LENGTH(' . $option['column'] . ') ' . $option['cond'][0] . ' ' . substr($option['cond'], 1);
                 }
                 $first = false;
-            }
-            else if($option['action'] == 'compare'){
+            } else if ($option['action'] == 'compare') {
 
-                $i =0;
+                $i = 0;
                 $myOp = $operators[$i];
-                while(strpos($option['cond'],$operators[$i]) === false)
-                {
+                while (strpos($option['cond'], $operators[$i]) === false) {
                     $i++;
                     $myOp = $operators[$i];
                 }
 
-                if($first){
-                    $query .= ' where '.$option['column'].' '.$myOp.' '.str_replace($myOp,'',$option['cond']);
-                }
-                else{
-                    $query .= ' and '.$option['column'].' '.$myOp.' '.str_replace($myOp,'',$option['cond']);
+                if ($first) {
+                    $query .= ' where ' . $option['column'] . ' ' . $myOp . ' ' . str_replace($myOp, '', $option['cond']);
+                } else {
+                    $query .= ' and ' . $option['column'] . ' ' . $myOp . ' ' . str_replace($myOp, '', $option['cond']);
                 }
                 $first = false;
             }

@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseModel extends Model
 {
+    public $softDelete = false;
+    public $timestamps = false;
+
     public function __construct()
     {
         $table = str_replace('models\\', '', strtolower(get_called_class()) . 's');

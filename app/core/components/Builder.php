@@ -91,6 +91,37 @@ EOT;
         }
     }
 
+    public function customController($class)
+    {
+        $class = ucfirst($class);
+        if (!file_exists('./app/controllers/' . $class . 'Controller.php')) {
+        $handle = fopen('./app/controllers/' . $class . 'Controller.php', 'w');
+        $model = $class;
+        $class .= 'Controller';
+        $text = <<<EOT
+<?php
+
+namespace controllers;
+use core\components\Controller;
+use models;
+
+class $class extends Controller
+{
+    public function show()
+    {
+
+    }
+}
+EOT;
+
+        fwrite($handle, $text);
+
+        return $class.' generate in app/controllers';
+    }
+
+        return $class.'Controller already exist.';
+    }
+
     public function model($class)
     {
 
@@ -104,8 +135,8 @@ namespace models;
 use core\components\BaseModel;
 
 class $class extends BaseModel{
-    //protected \$softDelete = true;
-    //protected \$timestamps = true;
+    //public \$softDelete = true;
+    //public \$timestamps = true;
 }
 EOT;
 
