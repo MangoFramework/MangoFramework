@@ -40,7 +40,7 @@ return array(
     'auth' => array(
     	'model' => '',
     	'id' => 'email',
-    	'password' => ''
+    	'password' => '',
     	'salt' => ''
 	)
 );

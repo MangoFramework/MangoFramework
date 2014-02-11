@@ -5,24 +5,23 @@ use core\container;
 Class Auth
 {
 	private $session;
-	private $salt;
 	private $db;
-	private $config
+	private $config;
 	private $input;
 
 	public function __construct(Session $session,Database $db , $input, $config)
 	{
 		$this->session = $session;
-		$this->salt = $salt;
+		$this->config = $config;
 		$this->db = $db->getConnection();
 		$this->input = $input;
 	}
 
 	public function login()
 	{
-		$model = if ($config['model'] === '') : 'User' ? $config['model'];
+		$model = ($config['model'] === '') ? 'User' : $config['model'];
 		$id = $config['id'];
-		$pwd = if ($config['password'] === '') : 'password' ? $config['password'];
+		$pwd = ($config['password'] === '') ? 'password' : $config['password'];
 		$user = $model::where($id,'=', $input[$id])->take(1)->get();
 		if ($user->$pwd == $this->encrypt($input))
 		{
@@ -40,12 +39,13 @@ Class Auth
 
 	public function encrypt($pass)
 	{
-		return sha1(md5($pwd.$this->salt));
+		return sha1(md5($pwd.$this->config['salt']));
 	}
 
 	public function isAuth()
 	{
-		return (!empty($session->getUser()));
+		$result = $session->getUser();
+		return (!empty($result));
 	}
 
 }

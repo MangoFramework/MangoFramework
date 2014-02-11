@@ -9,9 +9,9 @@ $capsule->addConnection($config);
 $container['config'] = $config;
 
 
-$container['db'] = $container->share(function($c) {
+$container['db'] = function($c) {
     return new PDO($c['config']['driver'].":host=" . $c['config']['host'] . ";dbname=" . $c['config']['database'], $c['config']['username'], $c['config']['password']);
-});
+};
 
 $container['schema'] = function($c) {
     /* Bootstrap Eloquent */

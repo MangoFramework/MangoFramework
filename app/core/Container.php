@@ -85,13 +85,13 @@ class Container extends \Pimple
         $this['Session'] = function ($c) {
             $config = $c['Config']->getAppConfig();
             return new $c['dependencies']['Session']($config['session']);
-        }
+        };
 
         // Auth
         $this['Auth'] = function ($c) {
             $config = $c['Config']->getAppConfig();
             return new $c['dependencies']['Auth']($c['Session'], $c['Database'], $c['inputs'], $config['auth']);
-        }
+        };
     }
 
     public static function make($name, $args = array())

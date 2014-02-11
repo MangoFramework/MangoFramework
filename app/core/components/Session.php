@@ -1,20 +1,16 @@
 <?php namespace core\components;
-
+use core\Container;
 class Session 
 {
   public function __construct($config)
   {
   	if ($config == 'native')
-  	{
   		session_start();
-  		$c = Container::getInstance();
-  		if (isset($c['input']['block']) && $c['input']['block'] == "FALSE")
-  			session_write_close();
-  		
-  		if (empty($_SESSION['data'])) {
-  			$_SESSION['data'] = array();
-  		}
-  	}
+
+		$c = Container::getInstance();
+    
+		if (isset($c['inputs']['block']) && $c['inputs']['block'] == "FALSE")
+			session_write_close();
   }
 
   public function addData($key, $value)
