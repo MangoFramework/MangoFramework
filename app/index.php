@@ -6,6 +6,3 @@ core\App::run();
 
 $time_end = microtime(true);
 $time = $time_end - $time_start;
-
-echo"<br>";
-echo "end: ".$time;
