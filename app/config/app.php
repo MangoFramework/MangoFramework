@@ -1,6 +1,19 @@
 <?php
-//Here, you have to add all your external dependencies like SDK, factory, so they can be access by the container. Specify the full namespace name.
-// example : "FB" => "\Module\Facebook\fb-sdk", can be use later : Container::make('FB')
+/*
+|--------------------------------------------------------------------------
+| Providers
+|--------------------------------------------------------------------------
+| The providers register in this configuration can be loaded anywhere in your application via the Container make() method.
+| You provid the full name of the Class with namespaces with aliases and use the alias with the make() method.
+| 
+| Example : 
+| 'Alias' => 'my\Path\Class'
+| 
+| Can be loaded like : 
+| $loadedClass = Container::make('Alias');
+|
+*/
+
 return array(
     'providers' => array(
     )

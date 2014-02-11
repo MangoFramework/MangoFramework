@@ -9,7 +9,7 @@ $capsule->addConnection($config);
 $container['config'] = $config;
 
 $container['db'] = $container->share(function($c) {
-    return new PDO("mysql:host=" . $c['config']['host'] . ";dbname=" . $c['config']['database'], $c['config']['username'], $c['config']['password']);
+    return new PDO($config['config']['driver'].":host=" . $c['config']['host'] . ";dbname=" . $c['config']['database'], $c['config']['username'], $c['config']['password']);
 });
 
 $container['schema'] = $container->share(function($c) {
