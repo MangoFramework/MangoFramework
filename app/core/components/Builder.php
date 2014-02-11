@@ -134,9 +134,9 @@ EOT;
 namespace models;
 use core\components\BaseModel;
 
-class $class extends BaseModel{
-    //public \$softDelete = true;
-    //public \$timestamps = true;
+class $class extends BaseModel
+{
+
 }
 EOT;
 
