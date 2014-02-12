@@ -5,29 +5,40 @@ var request = {
             method: method,
             url: url,
             data: data,
-            success: function(response) {
-                console.log(response);
+            success: function(data) {
+                ajax.appendData(data)
             },
             error: function() {
             }
         });
+    },
+
+    appendData : function(data) {
+        for (var i in data) {
+            $('#tdResponse').append(data[i] + "<br>");
+        }
     }
 };
 
 (function(){
     $('#send').click(function(){
-        var method;
-        var url;
+        var method = $("#methods option:selected").val();
+        var url = $("#url").val();
+        var data = {};
 
-
-
-        request.ajax('GET','http://localhost/MangoFrameworkSkelet/app/user');
+        $(".trParams").each(function(index) {
+            if ($('.keyParam' + index).val() && $('.valueParam' + index).val()) {
+                eval("data." + $('.keyParam' + index).val() + "= '" + $('.valueParam' + index).val() + "'");
+            }
+        });
+        console.log(data);
+        request.ajax(method, url, data);
     });
 
     var i=0;
     $('span.plus').click(function(){
 
-        $('#paramBody').append("<tr><td><span id=\"moins"+ i +"\" class=\"ic \">-</span></td><td><input type=\"text\" placeholder=\"Nom\" class=\"param"+i+"\"></td><td><input type=\"text\" placeholder=\"Valeur\" class=\"param"+i+"\"></td></tr>")
+        $('#paramBody').append("<tr class='trParams'><td><span id=\"moins"+ (i + 1) +"\" class=\"ic \">-</span></td><td><input type=\"text\" placeholder=\"Nom\" class=\"keyParam"+(i + 1)+"\"></td><td><input type=\"text\" placeholder=\"Valeur\" class=\"valueParam"+(i + 1)+"\"></td></tr>")
 
         $('span#moins'+ i).click(function(){
             $(this).parents('tr').remove();

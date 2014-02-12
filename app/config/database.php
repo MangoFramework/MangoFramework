@@ -17,7 +17,7 @@ return array(
             'host' => 'localhost',
             'database' => 'bibliotheque',
             'username' => 'root',
-            'password' => '',
+            'password' => 'x5stZny/',
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
