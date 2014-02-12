@@ -20,9 +20,9 @@ Class Auth
 	public function login()
 	{
 		$model = ($this->config['model'] === '') ? 'User' : $this->config['model'];
-		$id = $config['id'];
+		$id = $this->config['id'];
 		$pwd = ($this->config['password'] === '') ? 'password' : $this->config['password'];
-		$user = $model::where($id,'=', $input[$id])->take(1)->get();
+		$user = $model::where($id,'=', $this->input[$id])->take(1)->get();
 		if ($user->$pwd == $this->encrypt($this->input[$pwd]))
 		{
 			$this->session->addUser($user->getAttributes());
@@ -39,7 +39,7 @@ Class Auth
 
 	public function encrypt($pass)
 	{
-		return sha1(md5($pwd.$this->$this->config['salt']));
+		return sha1(md5($pass.$this->config['salt']));
 	}
 
 	public function isAuth()

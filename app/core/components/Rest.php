@@ -32,7 +32,6 @@ abstract class Rest extends Controller
         $model = new $class();
         $DB = App::$container['Database']->getConnection();
         $table = strtolower(str_replace('models\\', '', $class)) . 's';
-        $data = array("fdff");
 
         try
         {
@@ -106,7 +105,16 @@ abstract class Rest extends Controller
                     'attribute' => $column
                 );
             } else {
-                $object->$column = $value;
+                $authConfig = App::$container['Config']->getAppConfig()['auth'];
+                if($authConfig['active']
+                    && str_replace('models\\','',$class) == $authConfig['model']
+                    && $column == $authConfig['password']){
+
+                    $object->$column = App::$container['Auth']->encrypt($value);
+                }
+                else
+                    $object->$column = $value;
+
             }
         }
 
@@ -161,7 +169,15 @@ abstract class Rest extends Controller
                             'attribute' => $column
                         );
                     } else {
-                        $object->$column = $value;
+                        $authConfig = App::$container['Config']->getAppConfig()['auth'];
+                        if($authConfig['active']
+                            && str_replace('models\\','',$class) == $authConfig['model']
+                            && $column == $authConfig['password']){
+
+                            $object->$column = App::$container['Auth']->encrypt($value);
+                        }
+                        else
+                            $object->$column = $value;
                     }
                 }
 

@@ -38,10 +38,10 @@ return array(
     | password : password
     */
     'auth' => array(
-    	'model' => '',
+    	'model' => 'User',
     	'id' => 'email',
-    	'password' => '',
+    	'password' => 'password',
     	'salt' => '',
-        'on' => true
+        'active' => true
 	)
 );
