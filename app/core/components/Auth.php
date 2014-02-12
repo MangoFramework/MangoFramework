@@ -34,17 +34,17 @@ Class Auth
 
 	public function logout()
 	{
-		$session->logout();
+		$this->session->logout();
 	}
 
 	public function encrypt($pass)
 	{
-		return sha1(md5($pwd.$this->config['salt']));
+		return sha1(md5($pwd.$this->$this->config['salt']));
 	}
 
 	public function isAuth()
 	{
-		$result = $session->getUser();
+		$result = $this->session->getUser();
 		return (!empty($result));
 	}
 
