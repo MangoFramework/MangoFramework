@@ -4,6 +4,7 @@ composer.lock
 composer.phar
 app/config/database.php
 app/controllers/
+!app/controllers/DebuggerController.php
 app/factories/
 app/models/
 app/utils/list.php

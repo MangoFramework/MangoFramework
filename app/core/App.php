@@ -31,7 +31,10 @@ class App
     {
         self::$container = Container::getInstance();
         self::$container->loaders();
+        //Connect to the DB
         self::$container['Database'];
+        //Start Session
+        self::$container['Session'];
     }
 
     public static function routing()
