@@ -229,6 +229,7 @@ abstract class Rest extends Controller
         $options = App::$container['ComplexeOptions'];
         $first = true;
         $models = array();
+        $model = new $class();
         $DB = App::$container['Database']->getConnection();
         $table = strtolower(str_replace('models\\', '', $class)) . 's';
         $query = 'select * from ' . $table;
@@ -274,6 +275,10 @@ abstract class Rest extends Controller
                     $query .= ' and ' . $option['column'] . ' ' . $myOp . ' ' . str_replace($myOp, '', $option['cond']);
                 }
                 $first = false;
+            }
+
+            if($model->softDelete){
+                $query .= ' and deleted_at IS NULL';
             }
         }
 
