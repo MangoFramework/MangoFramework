@@ -23,7 +23,7 @@ Class Auth
 		$id = $config['id'];
 		$pwd = ($this->config['password'] === '') ? 'password' : $this->config['password'];
 		$user = $model::where($id,'=', $input[$id])->take(1)->get();
-		if ($user->$pwd == $this->encrypt($input))
+		if ($user->$pwd == $this->encrypt($this->input[$pwd]))
 		{
 			$this->session->addUser($user->getAttributes());
 			return $user;
