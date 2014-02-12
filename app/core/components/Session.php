@@ -8,7 +8,7 @@ class Session
   		session_start();
 
 		$c = Container::getInstance();
-    
+
 		if (isset($c['inputs']['block']) && $c['inputs']['block'] == "FALSE")
 			session_write_close();
   }
@@ -22,10 +22,10 @@ class Session
 
   public function getData($key)
   {
-  	if (array_key_exists($key, $_SESSION['data'])) {
+  	if (isset($_SESSION['data']) && array_key_exists($key, $_SESSION['data'])) {
   		return $_SESSION['data'][$key];
   	}
-  	elseif (array_key_exists($key,$_SESSION['flash'])) {
+  	elseif (isset($_SESSION['flash']) && array_key_exists($key,$_SESSION['flash'])) {
   		$data = $_SESSION['flash'][$key];
   		unset($_SESSION['flash'][$key]);
   		return $data;

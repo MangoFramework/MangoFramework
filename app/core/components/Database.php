@@ -2,6 +2,9 @@
 namespace core\components;
 
 use \Illuminate\Database\Capsule\Manager as Capsule;
+use \Exception;
+
+Class DatabaseException extends \Exception {}
 
 Class Database
 {
@@ -34,13 +37,15 @@ Class Database
         if (!empty($this->config['connections'][$defaultDB])) {
             try {
                 $capsule->addConnection($this->config['connections'][$defaultDB]);
+                $capsule->bootEloquent();
+                $this->connection = $capsule->getConnection();
+                $this->schemaManager = $this->connection->getDoctrineSchemaManager();
             } catch (\PDOException $e) {
-                echo $e->getMessage();
+                throw new DatabaseException("Error with database connection : ".$e->getMessage(), 1);
+                
             }
 
-            $capsule->bootEloquent();
-            $this->connection = $capsule->getConnection();
-            $this->schemaManager = $this->connection->getDoctrineSchemaManager();
+
         } else {
 
         }
