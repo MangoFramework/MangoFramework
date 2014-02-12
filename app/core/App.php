@@ -5,6 +5,7 @@ namespace core;
 use core\components\controllerMapException;
 use core\components\RouterException;
 use core\components\BlueprintException;
+use core\components\DatabaseException;
 use Symfony\Component\ClassLoader\UniversalClassLoader;
 
 class App
@@ -18,13 +19,16 @@ class App
 
             self::init();
             self::routing();
-            self::response();
 
         } catch (ContainerException $e) {
             var_dump($e);
-        } catch (controllerMapException $e) {
+        } catch (DatabaseException $e) {
             self::$container['Response']->setData(array('Error' => $e->getMessage()));
         }
+        catch (controllerMapException $e) {
+            self::$container['Response']->setData(array('Error' => $e->getMessage()));
+        }
+        self::response(); 
     }
 
     public static function init()
