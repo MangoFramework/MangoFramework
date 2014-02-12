@@ -5,7 +5,7 @@ return array(
     'prettyPrintJSON' => true,
     'eraseBuffer' => false,
     'REST' => array(
-        'type' => 'html'
+        'type' => 'json'
     ),
     'dieAfterResponse' => false,
     'createXmlFile' => null,
