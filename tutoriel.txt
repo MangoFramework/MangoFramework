@@ -1,0 +1,102 @@
+TUTO :
+
+-Install
+	-composer
+	-database config ( db vierge)
+créer une database vierge « bibliotheque »
+		<code>
+		'host' => 'localhost',
+         		   'database' => 'bibliotheque',
+       		     'username' => 'root',
+          		  'password' => '',
+		</code>
+- Eloquent migration
+	Commencer par générer le fichier de migration :
+Commande line :
+<code>php console.php orm generate</code>
+
+C’est la fonction up() situé dans ce fichier qui sera effectuer lors de la migration.
+Nous allons créer trois table afin de vous montrer efficacement la prise en main du framework.
+Voici le code nécessaire :
+
+<code>
+$this->get('schema')->create('users', function($table){
+            $table->increments('id');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+        $this->get('schema')->create('authors', function($table){
+            $table->increments('id');
+            $table->string('name');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+        $this->get('schema')->create('books', function($table){
+            $table->increments('id');
+            $table->string('name');
+            $table->text('content');
+            $table->integer('author_id')->unsigned()->index();
+            $table->foreign('author_id')->references('id')->on('authors');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+<code>
+
+Rest Test client
+
+url /debugger
+
+3 min
+
+
+Custom Route
+
+modele author :
+    public function books()
+    {
+        return $this->hasMany('\models\Book');
+    }
+author controler :
+    public $routes = array(
+        '/author/:id/books' => 'booksRelation'
+    );
+
+    public function booksRelation($id)
+    {
+        $books = models\Author::find($id)->books;
+
+        $arr = array();
+        foreach($books as $book)
+        {
+            $arr[] = $book->getAttributes();
+        }
+
+        self::$response->setType('json');
+        return $arr;
+    }
+
+
+ - Custom Controller
+
+php console.php generate controller toto
+
+show method :
+
+return array('toto show') ;
+
+
+public $routes = array(
+        '/toto/myRoute/:nombre' => array(
+            'method' => 'helloWorld',
+            'cond' => array(
+               ':nombre' => '\d+'
+            )
+        )
+    );
+
+    public function helloWorld($nombre)
+    {
+	return array('here');
+    }

@@ -14,7 +14,7 @@ var request = {
     },
 
     appendData : function(data) {
-        $('.trResonse').empty();
+        $('.trResponse').empty();
         for (var i in data) {
 
             if (typeof data[i] === 'object') {
