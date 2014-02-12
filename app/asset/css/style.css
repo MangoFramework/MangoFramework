@@ -383,18 +383,18 @@ li.L1,li.L3,li.L5,li.L7,li.L9 { }
 	margin-bottom: 10px
 }
 
-#reqURL form input, #reqURL form select
+#reqURL div input, #reqURL div select
 {
 	border: 1px solid #999;
 }
 
-#reqURL form input[type=text]
+#reqURL div input[type=text]
 {
 	width: 50%;
 	padding-left: 5px
 }
 
-#reqURL form input[type=submit]
+#reqURL div input[type=submit]
 {
 	border: 1px solid #f8ae20;
 	background-color: #f8ae20;

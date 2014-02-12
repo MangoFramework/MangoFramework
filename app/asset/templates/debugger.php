@@ -21,16 +21,16 @@
 </header>
 <div id="reqURL">
     <span>Request URL</span>
-    <form>
-        <select>
+    <div>
+        <select id="methods">
             <option>GET</option>
             <option>POST</option>
             <option>DELETE</option>
             <option>PUT</option>
         </select>
-        <input type="text" placeholder="<- Séléctionnez une méthode API">
-        <input type="submit" value="Envoyer">
-    </form>
+        <input type="text" id="url" placeholder="<- Séléctionnez une méthode API">
+        <input type="submit" id="send" value="Envoyer">
+    </div>
 </div>
 <div id="params">
     <table id="paramBody">
@@ -39,16 +39,30 @@
             <th>Paramètre</th>
             <th>Valeur</th>
         </tr>
-        <tr>
+        <tr class="trParams">
             <td>
                 <span class="ic plus">+</span>
             </td>
             <td>
-                <input type="text" placeholder="Nom" class="couple1">
+                <input type="text" placeholder="Nom" class="keyParam0">
             </td>
             <td>
-                <input type="text" placeholder="Valeur" class="couple1">
+                <input type="text" placeholder="Valeur" class="valueParam0">
             </td>
+        </tr>
+    </table>
+</div>
+<div id="params">
+    <table id="paramBody">
+        <tr>
+            <th>&nbsp;</th>
+            <th>Requ&egrave;te</th>
+            <th>R&eacute;ponse</th>
+        </tr>
+        <tr id="trResponse">
+            <td></td>
+            <td></td>
+            <td id="tdResponse"></td>
         </tr>
     </table>
 </div>
