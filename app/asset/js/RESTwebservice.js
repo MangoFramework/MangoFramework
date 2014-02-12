@@ -6,7 +6,7 @@ var request = {
             url: url,
             data: data,
             success: function(data) {
-                ajax.appendData(data)
+                request.appendData(data)
             },
             error: function() {
             }
@@ -14,8 +14,21 @@ var request = {
     },
 
     appendData : function(data) {
+        $('.trResonse').empty();
         for (var i in data) {
-            $('#tdResponse').append(data[i] + "<br>");
+
+            if (typeof data[i] === 'object') {
+                $('.responseBody').append("<tr class='trResponse" + i + " trResponse'>");
+
+                for (var j in data[i]) {
+                    $('.trResponse' + i).append("<td></td><td>" + j + " : " + data[i][j] + "</td>");
+                }
+
+                $('.responseBody').append("</tr>");
+            } else {
+                $('.responseBody').append("<tr class='trResponse'><td></td><td>" + i + " : " + data[i] + "</td>");
+            }
+
         }
     }
 };
@@ -31,7 +44,6 @@ var request = {
                 eval("data." + $('.keyParam' + index).val() + "= '" + $('.valueParam' + index).val() + "'");
             }
         });
-        console.log(data);
         request.ajax(method, url, data);
     });
 
