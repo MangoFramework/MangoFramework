@@ -1,0 +1,460 @@
+body
+{
+	font-family: 'Montserrat Alternates', Arial, sans-serif;
+	background: url(../img/bg.png) left top;
+	background-attachment:fixed;
+}
+
+/*HOME PAGE*/
+
+.center
+{
+	width: 900px;
+	margin: auto
+}
+
+#centerDoc
+{
+	background: url(../img/bg_center.gif) repeat-y center top;
+}
+
+.button
+{
+	display: block;
+	margin: auto;
+	background-color: #f8ae20;
+	color: #FFF;
+	border-radius: 100px;
+	width: 400px;
+	height: 65px;
+	margin-top: 50px;
+	text-align: center;
+	line-height: 65px;
+	font-size: 25px;
+	font-weight: bold;
+	text-decoration: none
+}
+
+.clear
+{
+	clear: both;
+}
+
+#headerHome
+{
+	font-family: "Open Sans", Arial, sans-serif;
+	line-height: 25px;
+	padding: 100px 0;
+	position: relative
+}
+
+#headerHome h1
+{
+	text-align: center
+}
+
+header h1 span
+{
+	position: absolute;
+	left: -10000px
+}
+
+#headerHome p
+{
+	margin-top: 40px;
+	text-align: justify
+}
+
+#btnDoc
+{
+	float: right;
+}
+
+#dl
+{
+	float: left;
+}
+
+.button img
+{
+	display: none;
+}
+
+.button:hover span
+{
+	display: none;
+}
+
+.button:hover img
+{
+	display: inline-block;
+}
+
+#circles
+{
+	height: 130px;
+	background: #f8ae20 url(../img/circles.png) no-repeat 50% 50%;
+	margin-bottom: 30px
+}
+
+#adjectives
+{
+	margin-bottom: 25px
+}
+
+#adjectives span
+{
+	display: inline-block;
+	width: 33%;
+	text-align: center;
+	color: #141414;
+	font-size: 25px
+}
+
+#routeREST
+{
+	text-align: left;
+	width: 100%;
+	font-size: 13px;
+	margin-bottom: 30px;
+	border-radius: 10px
+}
+
+#routeREST tr
+{
+	border: 1px solid #555;
+}
+
+#routeREST tr td, #routeREST tr th
+{
+	padding: 15px 5px
+}
+
+/* DOCUMENTATION */
+
+#menuDoc, #contentDoc
+{
+	font-family: "Open Sans", Arial, sans-serif;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	color: #141414
+}
+
+div#menuDoc
+{
+	width: 250px;
+	font-size: 14px;
+	padding: 10px;
+	background-color: #FFF;
+
+	position: fixed;
+	top: 150px
+}
+
+div#menuDoc li
+{
+	list-style-type: none;
+	margin-bottom: 5px
+}
+
+div#menuDoc a
+{
+	text-decoration: none;
+	color: #555
+}
+
+div#menuDoc a:hover
+{
+	font-weight: bold
+}
+
+div#menuDoc .gtitle
+{
+	margin-bottom: 10px;
+	font-weight: bold;
+	color: #f8ae20;
+	font-size: 16px
+}
+
+div#menuDoc h3.lvl1
+{
+	padding-left: 20px;
+	background: url(../img/puce.png) no-repeat left center;
+	margin-bottom: 10px;
+	cursor: pointer
+}
+
+div#menuDoc .lvl2
+{
+	font-family: 'Open Sans', Arial, sans-serif;
+	padding-left: 40px
+}
+
+div#menuDoc .lvl3
+{
+	padding-left: 60px
+}
+
+div#accordion h3.lvl1
+{
+	background: url(../img/minifleche.png) no-repeat right center, url(../img/puce.png) no-repeat left center;
+}
+
+div#contentDoc
+{
+	float: right;
+	padding: 0 25px;
+	width: 650px
+}
+
+section.partDoc
+{
+	margin-bottom: 50px
+}
+
+section.partDoc h2
+{
+	font-size: 20px;
+	padding-left: 30px;
+	margin-bottom: 25px;
+	color: #555;
+	background: url(../img/puceGG.png) no-repeat left center
+}
+
+section.partDoc h2.title
+{
+	font-size: 25px;
+	color: #141414;
+	background: url(../img/puceG.png) no-repeat left center
+}
+
+section.partDoc h2.titlegs
+{
+	font-size: 30px;
+	color: #f8ae20;
+	background: url(../img/puceG.png) no-repeat left center
+}
+
+section.partDoc p
+{
+	font-size: 14px;
+	margin-bottom: 25px;
+	line-height: 20px
+}
+
+span.notice
+{
+	display: block;
+	color: #FFF;
+	padding: 10px;
+	margin-top: 15px;
+	border-radius: 10px;
+	background-color: #f8ae20
+}
+
+code
+{
+	background-color: #eee;
+	color: #141414;
+	font-weight: bold;
+	padding: 0 5px
+}
+
+h3
+{
+	margin-bottom: 15px;
+	color: #555
+}
+
+header#headerDoc
+{
+	padding: 20px 0 40px 0;
+	text-align: center
+}
+
+footer
+{
+	font-family: 'Open Sans', Arial, sans-serif;
+	font-size: 12px;
+	text-align: center;
+	padding: 10px;
+	color: #FFF;
+	background-color: #141414;
+
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0
+}
+
+footer a
+{
+	color: #f8ae20;
+	text-decoration: none
+}
+
+footer a:hover
+{
+	text-decoration: underline
+}
+
+#accordion div
+{
+	padding-bottom: 5px
+}
+
+a.cf
+{
+	color: #888
+}
+
+a.cf:hover
+{
+	text-decoration: none
+}
+
+span.small
+{
+	font-variant:small-caps;
+	font-weight: bold
+}
+
+code.codeType
+{
+	margin-right: 10px
+}
+
+/* PRE */
+
+/* desert scheme ported from vim to google prettify */
+pre.prettyprint { display: block; background-color: #333 }
+pre .nocode { background-color: none; color: #000 }
+pre .str { color: #ffa0a0 } /* string  - pink */
+pre .kwd { color: #f0e68c; font-weight: bold }
+pre .com { color: #87ceeb } /* comment - skyblue */
+pre .typ { color: #98fb98 } /* type    - lightgreen */
+pre .lit { color: #cd5c5c } /* literal - darkred */
+pre .pun { color: #fff }    /* punctuation */
+pre .pln { color: #fff }    /* plaintext */
+pre .tag { color: #f0e68c; font-weight: bold } /* html/xml tag    - lightyellow */
+pre .atn { color: #bdb76b; font-weight: bold } /* attribute name  - khaki */
+pre .atv { color: #ffa0a0 } /* attribute value - pink */
+pre .dec { color: #98fb98 } /* decimal         - lightgreen */
+
+/* Specify class=linenums on a pre to get line numbering */
+ol.linenums { margin-top: 0; margin-bottom: 0; color: #AEAEAE } /* IE indents via margin-left */
+li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8 { list-style-type: none }
+/* Alternate shading for lines */
+li.L1,li.L3,li.L5,li.L7,li.L9 { }
+
+@media print {
+  pre.prettyprint { background-color: none }
+  pre .str, code .str { color: #060 }
+  pre .kwd, code .kwd { color: #006; font-weight: bold }
+  pre .com, code .com { color: #600; font-style: italic }
+  pre .typ, code .typ { color: #404; font-weight: bold }
+  pre .lit, code .lit { color: #044 }
+  pre .pun, code .pun { color: #440 }
+  pre .pln, code .pln { color: #000 }
+  pre .tag, code .tag { color: #006; font-weight: bold }
+  pre .atn, code .atn { color: #404 }
+  pre .atv, code .atv { color: #060 }
+}
+
+/* CONSOLE */
+
+#headerConsole
+{
+	padding: 10px 0;
+	text-align: center;
+	background-color: #f8ae20
+}
+
+#reqURL
+{
+	padding: 10px;
+	background-color: #FFF
+}
+
+#reqURL span
+{
+	font-family: 'Open Sans Semibold', Arial, sans-serif;
+	display: block;
+	margin-bottom: 10px
+}
+
+#reqURL form input, #reqURL form select
+{
+	border: 1px solid #999;
+}
+
+#reqURL form input[type=text]
+{
+	width: 50%;
+	padding-left: 5px
+}
+
+#reqURL form input[type=submit]
+{
+	border: 1px solid #f8ae20;
+	background-color: #f8ae20;
+	color: #FFF;
+	cursor: pointer
+}
+
+#params
+{
+	padding: 10px;
+	margin-bottom: 15px;
+}
+
+#paramBody
+{
+	font-family: 'Open Sans', Arial, sans-serif;
+	text-align: left;
+	font-size: 13px;
+}
+
+#paramBody th, #paramBody td
+{
+	padding: 5px;
+}
+
+#paramBody input
+{
+	padding: 5px;
+	border: 1px solid #999
+}
+
+span.ic
+{
+	display: block;
+	width: 20px;
+	height: 20px;
+	font-size: 15px;
+	font-weight: bold;
+	text-align: center;
+	line-height: 20px;
+	border-radius: 100px;
+	background-color: #141414;
+	color: #FFF; 
+	cursor: pointer
+}
+
+#request, #response
+{
+
+	width: 49%;
+	height: 500px;
+	background-color: #FFF
+}
+
+#request
+{
+	float: left
+}
+
+#response
+{
+	float: right
+}

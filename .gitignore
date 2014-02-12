@@ -5,6 +5,7 @@ composer.phar
 app/config/database.php
 app/controllers/*
 !app/controllers/DebuggerController.php
+!app/controllers/AuthController.php
 app/factories/
 app/models/
 app/utils/list.php
