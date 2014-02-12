@@ -44,10 +44,10 @@
                 <span class="ic plus">+</span>
             </td>
             <td>
-                <input type="text" placeholder="Nom" class="couple1">
+                <input type="text" placeholder="Nom" class="param0">
             </td>
             <td>
-                <input type="text" placeholder="Valeur" class="couple1">
+                <input type="text" placeholder="Valeur" class="param0">
             </td>
         </tr>
     </table>

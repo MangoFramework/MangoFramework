@@ -42,6 +42,6 @@ return array(
     	'id' => 'email',
     	'password' => '',
     	'salt' => '',
-        'on' => true
+        'active' => true
 	)
 );

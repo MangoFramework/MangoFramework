@@ -18,6 +18,9 @@ var request = {
     $('#send').click(function(){
         var method;
         var url;
+
+
+
         request.ajax('GET','http://localhost/MangoFrameworkSkelet/app/user');
     });
 
