@@ -15,4 +15,10 @@ class Config
         $config = include('./config/docgen.php');
         return $config;
     }
+
+    public function getAppConfig()
+    {
+        $config = include './config/app.php';
+        return $config;
+    }
 }

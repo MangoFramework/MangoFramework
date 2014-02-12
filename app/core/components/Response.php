@@ -14,7 +14,7 @@ class Response
     protected $length = NULL;
     protected $type = 'json';
     protected $data = NULL;
-    protected $defaultData;
+    protected $defaultData = array();
     protected $errorData = FALSE;
     protected $prettyPrint = FALSE;
     protected $escapeSlashes = TRUE;
@@ -168,7 +168,7 @@ class Response
         return $this;
     }
 
-    public function setData($data = null,$type = null)
+    public function setData($data,$type = null)
     {
         if ($type === 'default') {
             $this->defaultData = $data;
@@ -478,9 +478,7 @@ class Response
                     $encodedData = $this->jsonEncodeUTF8($data);
                 } else if (is_array($data) && $params['htmlJSONEncode'] === FALSE) {
                     Throw new ResponseException('Invalid var type : $data can\'t be an array in html response mode');
-                } else if (!is_array($data) && $params['htmlJSONEncode'] === TRUE) {
-                    $encodedData = $this->jsonEncodeUTF8($data);
-                } else if (!is_array($data) && $params['htmlJSONEncode'] === FALSE) {
+                } else if (!is_array($data)) {
                     $encodedData = $data;
                 }
             } else if ($type === 'xml') {

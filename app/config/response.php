@@ -9,5 +9,6 @@ return array(
     ),
     'dieAfterResponse' => false,
     'createXmlFile' => null,
-    'replaceBody' => true
+    'replaceBody' => true,
+    ''
 );
