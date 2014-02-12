@@ -19,13 +19,13 @@ Class Auth
 
 	public function login()
 	{
-		$model = ($config['model'] === '') ? 'User' : $config['model'];
+		$model = ($this->config['model'] === '') ? 'User' : $this->config['model'];
 		$id = $config['id'];
-		$pwd = ($config['password'] === '') ? 'password' : $config['password'];
+		$pwd = ($this->config['password'] === '') ? 'password' : $this->config['password'];
 		$user = $model::where($id,'=', $input[$id])->take(1)->get();
 		if ($user->$pwd == $this->encrypt($input))
 		{
-			$session->addUser($user->getAttributes());
+			$this->session->addUser($user->getAttributes());
 			return $user;
 		}
 	
