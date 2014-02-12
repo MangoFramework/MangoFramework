@@ -21,13 +21,15 @@ var request = {
         request.ajax('GET','http://localhost/MangoFrameworkSkelet/app/user');
     });
 
+    var i=0;
     $('span.plus').click(function(){
 
-        $('#paramBody').append("<tr><td><span class=\"ic moins\">-</span></td><td><input type=\"text\" placeholder=\"Nom\" class=\"couple1\"></td><td><input type=\"text\" placeholder=\"Valeur\" class=\"couple1\"></td></tr>")
+        $('#paramBody').append("<tr><td><span id=\"moins"+ i +"\" class=\"ic \">-</span></td><td><input type=\"text\" placeholder=\"Nom\" class=\"param"+i+"\"></td><td><input type=\"text\" placeholder=\"Valeur\" class=\"param"+i+"\"></td></tr>")
 
-        $('span.moins').click(function(){
-            $('span.moins').parent().parent().remove();
+        $('span#moins'+ i).click(function(){
+            $(this).parents('tr').remove();
         });
+        i++;
     });
 })(jQuery);
 

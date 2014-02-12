@@ -41,6 +41,7 @@ return array(
     	'model' => '',
     	'id' => 'email',
     	'password' => '',
-    	'salt' => ''
+    	'salt' => '',
+        'on' => true
 	)
 );
