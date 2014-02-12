@@ -15,9 +15,9 @@ return array(
         'mysql' => array(
             'driver' => 'mysql',
             'host' => 'localhost',
-            'database' => 'test',
+            'database' => 'bibliotheque',
             'username' => 'root',
-            'password' => '',
+            'password' => 'x5stZny/',
             'charset' => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix' => '',
