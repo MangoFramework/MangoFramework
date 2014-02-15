@@ -14,31 +14,55 @@ var request = {
     },
 
     appendData : function(data) {
-        $('.trResponse').remove();
+        $('.responseBody').empty();
 
         if (typeof data === 'object') {
             if (!jQuery.isEmptyObject(data)) {
+                // print column title
+                $('.responseBody').append("<tr class='trResponse trResponseKey'>");
+
                 for (var mainKey in data) {
-                    if (typeof data[mainKey] === 'object') {
-                        $('.responseBody').append("<tr class='trResponse" + mainKey + " trResponse'>");
+                    if (typeof data[mainKey] === 'object' && data[mainKey] != null) {
+                        for (var secKey in data[mainKey]) {
+                            if (mainKey == 0) {
+                                $('.trResponseKey').append("<th>" + secKey + "</th>");
+                            }
+                        }
+                    } else {
+                        $('.trResponseKey').append("<th>" + mainKey + "</th>");
+                    }
+                }
+
+                $('.responseBody').append("</tr>");
+
+                // print value
+                if (data[0] && typeof data[0] === 'object') {
+                    for (var mainKey in data) {
+                        $('.responseBody').append("<tr class='trResponse trResponseValue" + mainKey + " trResponseValue'>");
 
                         for (var secKey in data[mainKey]) {
-                            $('.trResponse' + mainKey).append("<td></td><td>" + secKey + " : " + data[mainKey][secKey] + "</td>");
+                            $('.trResponseValue' + mainKey).append("<td>" + data[mainKey][secKey] + "</td>");
                         }
 
                         $('.responseBody').append("</tr>");
-                    } else {
-                        $('.responseBody').append("<tr class='trResponse'><td></td><td>" + mainKey + " : " + data[mainKey] + "</td>");
                     }
+                } else {
+                    $('.responseBody').append("<tr class='trResponse trResponseValue'>");
+
+                    for (var mainKey in data) {
+                        $('.trResponseValue').append("<td>" + data[mainKey] + "</td>");
+                    }
+
+                    $('.responseBody').append("</tr>");
                 }
             } else {
-                $('.responseBody').append("<tr class='trResponse'><td></td><td> no data </td>");
+                $('.responseBody').append("<tr class='trResponse'><td>no data</td></tr>");
             }
         } else {
             data = JSON.parse(data);
 
             for (var mainKey in data) {
-                $('.responseBody').append("<tr class='trResponse'><td></td><td>" + mainKey + " : " + data[mainKey] + "</td>");
+                $('.responseBody').append("<tr class='trResponse'><td>" + mainKey + " : " + data[mainKey] + "</td></tr>");
             }
         }
     }

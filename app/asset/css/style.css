@@ -458,3 +458,20 @@ span.ic
 {
 	float: right
 }
+
+/* response */
+
+.responseBody
+{
+    margin-top: 10px;
+}
+
+.trResponseKey th
+{
+    border: 1px solid black;
+}
+
+.trResponseValue td
+{
+    border: 1px solid black;
+}

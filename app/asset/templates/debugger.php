@@ -53,11 +53,10 @@
     </table>
 </div>
 <div id="params">
+    <h1>R&eacute;ponse</h1>
+
     <table id="paramBody" class="responseBody">
-        <tr>
-            <th>&nbsp;</th>
-            <th id=""thResponse>R&eacute;ponse</th>
-        </tr>
+
     </table>
 </div>
 <footer>
