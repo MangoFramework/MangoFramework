@@ -14,21 +14,32 @@ var request = {
     },
 
     appendData : function(data) {
-        $('.trResponse').empty();
-        for (var i in data) {
+        $('.trResponse').remove();
 
-            if (typeof data[i] === 'object') {
-                $('.responseBody').append("<tr class='trResponse" + i + " trResponse'>");
+        if (typeof data === 'object') {
+            if (!jQuery.isEmptyObject(data)) {
+                for (var mainKey in data) {
+                    if (typeof data[mainKey] === 'object') {
+                        $('.responseBody').append("<tr class='trResponse" + mainKey + " trResponse'>");
 
-                for (var j in data[i]) {
-                    $('.trResponse' + i).append("<td></td><td>" + j + " : " + data[i][j] + "</td>");
+                        for (var secKey in data[mainKey]) {
+                            $('.trResponse' + mainKey).append("<td></td><td>" + secKey + " : " + data[mainKey][secKey] + "</td>");
+                        }
+
+                        $('.responseBody').append("</tr>");
+                    } else {
+                        $('.responseBody').append("<tr class='trResponse'><td></td><td>" + mainKey + " : " + data[mainKey] + "</td>");
+                    }
                 }
-
-                $('.responseBody').append("</tr>");
             } else {
-                $('.responseBody').append("<tr class='trResponse'><td></td><td>" + i + " : " + data[i] + "</td>");
+                $('.responseBody').append("<tr class='trResponse'><td></td><td> no data </td>");
             }
+        } else {
+            data = JSON.parse(data);
 
+            for (var mainKey in data) {
+                $('.responseBody').append("<tr class='trResponse'><td></td><td>" + mainKey + " : " + data[mainKey] + "</td>");
+            }
         }
     }
 };
@@ -44,6 +55,7 @@ var request = {
                 eval("data." + $('.keyParam' + index).val() + "= '" + $('.valueParam' + index).val() + "'");
             }
         });
+
         request.ajax(method, url, data);
     });
 
@@ -51,9 +63,9 @@ var request = {
     $('span.plus').click(function(){
 
         $('#paramBody').append("<tr class='trParams'><td><span id=\"moins"+ (i + 1) +"\" class=\"ic \">-</span></td><td><input type=\"text\" placeholder=\"Nom\" class=\"keyParam"+(i + 1)+"\"></td><td><input type=\"text\" placeholder=\"Valeur\" class=\"valueParam"+(i + 1)+"\"></td></tr>")
-
-        $('span#moins'+ i).click(function(){
-            $(this).parents('tr').remove();
+        $('span#moins'+ (i + 1)).click(function(){
+            $(this).parents('.trParams').remove();
+            i--;
         });
         i++;
     });
