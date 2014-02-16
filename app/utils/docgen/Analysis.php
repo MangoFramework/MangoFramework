@@ -164,8 +164,6 @@ Abstract Class Analysis Extends Builder
                 }
             }
         }
-
-        var_dump($this->builtArray);
     }
 }
 
