@@ -82,7 +82,7 @@ var request = {
                     $('.responseBody').append("<tr class='trResponse trResponseValue" + convertKey + " trResponseValue'>");
 
                     for (var secKey in data[mainKey]) {
-                        $('.trResponseValue' + convertKey).append("<td>" + (data[mainKey][secKey] != '' ? data[mainKey][secKey] : '<span class="noData">empty</span>') + "</td>");
+                        $('.trResponseValue' + convertKey).append("<td>" + (data[mainKey][secKey] != '' || typeof data[mainKey][secKey] === 'boolean' ? data[mainKey][secKey] : '<span class="noData">empty</span>') + "</td>");
                     }
 
                     $('.responseBody').append("</tr>");
@@ -91,7 +91,7 @@ var request = {
                 $('.responseBody').append("<tr class='trResponse trResponseValue'>");
 
                 for (var mainKey in data) {
-                    $('.trResponseValue').append("<td>" + (data[mainKey] != '' ? data[mainKey] : '<span class="noData">empty</span>') + "</td>");
+                    $('.trResponseValue').append("<td>" + (data[mainKey] != '' || typeof data[mainKey] === 'boolean' ? data[mainKey] : '<span class="noData">empty</span>') + "</td>");
                 }
 
                 $('.responseBody').append("</tr>");
