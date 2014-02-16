@@ -15,27 +15,27 @@ Class DocGen Extends Analysis
      */
     protected $filePaths = array();
 
-    public $route = '/documentation';
-
     /**
      * Name of the doc generate.
      *
      * @type: attribute public string
      * @name: $tag
      */
-    protected $docPath = 'doc.php';
+    protected $docPath;
+    protected $docType;
 
     public function __construct()
     {
-        $filePaths = include_once('./config/docgen.php');
+        $config = \core\App::$container['Config']->getDocGen();
 
-        if (is_array($filePaths) && !empty($filePaths)) {
-            $this->filePaths = $filePaths[0];
-            $this->docPath = $filePaths[1]['file'];
-            $this->route = $filePaths[1]['route'];
+        if (is_array($config['paths']) && !empty($config['paths'])) {
+            $this->filePaths = $config['paths'];
         } else {
             Throw New DocgenException('Invalid var type : $filePath must be an array and not be empty');
         }
+
+        $this->docPath = $config['infos']['file'];
+        $this->docType = $config['infos']['docType'];
     }
 
     /**
@@ -172,103 +172,58 @@ Class DocGen Extends Analysis
     /**
      * Foreach all file set to parse to create the documentation file
      *
-     * @type: method
+     * @type: method public static
      * @param: string $file contain the file name of each parsed file
      * @return: string $footerContent structured footer to append
      */
-    public function create($docType = NULL)
+    public function create()
     {
-        if (!is_null($docType)) {
-            $this->docType = $docType;
-        }
-
         $globKey = NULL;
 
-        if (is_array($this->filePaths)) {
-            foreach ($this->filePaths as $type => $filePath) {
-                if ($type === 'folders') {
-                    if (is_array($filePath)) {
-                        foreach ($filePath as $file) {
-                            foreach (glob($file . '/*.php') as $k => $f) {
-                                if (($nb = count(glob($file . '/*.php'))) === ($k + 1)) {
-                                    if (is_null($globKey)) {
-                                        $globKey = $k;
-                                    } else {
-                                        $globKey++;
-                                    }
-                                } else {
-                                    if (!is_null($globKey)) {
-                                        $globKey++;
-                                    }
-                                }
-
-                                if (file_exists($file)) {
-                                    if (FALSE !== ($content = file_get_contents($f))) {
-                                        $this->fileNumber = (is_null($globKey) ? $k : $globKey);
-                                        $this->createDoc($content, $f);
-                                    } else {
-                                        Throw New  FilesystemException('File ' . $f . ' can\'t be read');
-                                    }
-                                } else {
-                                    Throw New FilesystemException('File ' . $f . ' doesn\'t exist');
-                                }
-                            }
-                        }
-                    } else {
-                        foreach (glob($filePath . '/*.php') as $k => $file) {
-                            if (file_exists($file)) {
-                                if (FALSE !== ($content = file_get_contents($file))) {
-                                    $this->fileNumber = $k;
-                                    $this->createDoc($content, $file);
-                                } else {
-                                    Throw New  FilesystemException('File ' . $file . ' can\'t be read');
-                                }
+        foreach ($this->filePaths as $type => $filePath) {
+            if ($type === 'folders') {
+                foreach ($filePath as $file) {
+                    foreach (glob($file . '/*.php') as $k => $f) {
+                        if (($nb = count(glob($file . '/*.php'))) === ($k + 1)) {
+                            if (is_null($globKey)) {
+                                $globKey = $k;
                             } else {
-                                Throw New FilesystemException('File ' . $file . ' doesn\'t exist');
-                            }
-                        }
-                    }
-                } else if ($type === "files") {
-                    if (is_array($filePath)) {
-                        foreach($filePath as $k => $file) {
-                            if (file_exists($filePath)) {
-                                if (FALSE !== ($content = file_get_contents($filePath))) {
-                                    $this->fileNumber = $k;
-                                    $this->createDoc($content, $filePath);
-                                } else {
-                                    Throw New  FilesystemException('File ' . $filePath . ' can\'t be read');
-                                }
-                            } else {
-                                Throw New FilesystemException('File ' . $filePath . ' doesn\'t exist');
-                            }
-                        }
-                    } else {
-                        if (file_exists($filePath)) {
-                            if (FALSE !== ($content = file_get_contents($filePath))) {
-                                $this->fileNumber = $k;
-                                $this->createDoc($content, $filePath);
-                            } else {
-                                Throw New  FilesystemException('File ' . $filePath . ' can\'t be read');
+                                $globKey++;
                             }
                         } else {
-                            Throw New FilesystemException('File ' . $filePath . ' doesn\'t exist');
+                            if (!is_null($globKey)) {
+                                $globKey++;
+                            }
+                        }
+
+                        if (file_exists($file)) {
+                            if (FALSE !== ($content = file_get_contents($f))) {
+                                $this->fileNumber = (is_null($globKey) ? $k : $globKey);
+                                $this->createDoc($content, $f);
+                            } else {
+                                Throw New  FilesystemException('File ' . $f . ' can\'t be read');
+                            }
+                        } else {
+                            Throw New FilesystemException('File ' . $f . ' doesn\'t exist');
                         }
                     }
                 }
-            }
-        } else {
-            if (file_exists($this->filePaths)) {
-                if (FALSE !== ($content = file_get_contents($this->filePaths))) {
-                    $this->fileNumber = 0;
-                    $this->createDoc($content, $this->filePaths);
-                } else {
-                    Throw New  FilesystemException('File ' . $this->filePaths . ' can\'t be read');
+            } else if ($type === "files") {
+                foreach($filePath as $k => $file) {
+                    if (file_exists($filePath)) {
+                        if (FALSE !== ($content = file_get_contents($filePath))) {
+                            $this->fileNumber = $k;
+                            $this->createDoc($content, $filePath);
+                        } else {
+                            Throw New  FilesystemException('File ' . $filePath . ' can\'t be read');
+                        }
+                    } else {
+                        Throw New FilesystemException('File ' . $filePath . ' doesn\'t exist');
+                    }
                 }
-            } else {
-                Throw New FilesystemException('File ' . $this->filePaths . ' doesn\'t exist');
             }
         }
 
-        $this->process($this->docPath);
+        $this->process();
     }
 }

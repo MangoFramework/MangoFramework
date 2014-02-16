@@ -1,14 +1,20 @@
 <?php
 
 return array(
-    array(
+    'paths' => array(
         'folders' => array(
             'controllers',
-            'factories'
+            'factories',
+            //'!controllers/ExampleController.php',
+            //'!factories/ExampleFactories.php',
         ),
+        /*'files' => array(
+            'controllers/ExampleController.php,
+            'factories/ExampleFactories.php,
+        ),*/
     ),
-    array(
-        'route' => '/documentation',
-        'file' => 'doc.php'
-    )
+    'infos' => array(
+        'file' => './asset/templates/documentation.php',
+        'docType' => 'html',
+    ),
 );

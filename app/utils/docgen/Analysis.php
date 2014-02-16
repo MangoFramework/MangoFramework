@@ -2,10 +2,9 @@
 
 namespace utils\docgen;
 
-Class Analysis Extends Builder
+Abstract Class Analysis Extends Builder
 {
     protected $fullContent = array();
-    protected $docType = 'html';
 
     private $builtArray = array();
     private $reflectionClass;
@@ -16,10 +15,14 @@ Class Analysis Extends Builder
 
     }
 
-    // Waiting for template
-    private function docHTML($docPath)
+    private function docHTML()
     {
-        $this->build('html', $this->builtArray, $docPath);
+        $this->buildHtml($this->builtArray, $this->docPath);
+    }
+
+    private function sortByRange($a, $b)
+    {
+        return strcmp($a['infos']['range'], $b['infos']['range']);
     }
 
     private function buildArray()
@@ -150,13 +153,14 @@ Class Analysis Extends Builder
         }
     }
 
-    protected function process($docPath)
+    protected function process()
     {
         if (!empty($this->fullContent)) {
             $this->buildArray();
             if (!empty($this->builtArray)) {
+                usort($this->builtArray, array($this, 'sortByRange'));
                 if (in_array($this->docType, ['html', 'pdf'])) {
-                    $this->{'doc' . strtoupper($this->docType)}($docPath);
+                    $this->{'doc' . strtoupper($this->docType)}();
                 }
             }
         }

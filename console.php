@@ -72,4 +72,16 @@ $console
         }
     });
 
+// Docgen
+$console
+    ->register('docgen')
+    ->setDescription('generate a documentation')
+    ->setHelp('')
+    ->setCode(function (InputInterface $input, OutputInterface $output) {
+        $docGen = new \utils\docgen\DocGen();
+        $docGen->create();
+
+        $output->writeln('Documentation generated. Route "/app/documentation"');
+    });
+
 $console->run();

@@ -18,12 +18,11 @@ Abstract Class Builder
 
     }
 
-    protected function build($type = 'html', $analysis = array(), $docPath)
+    protected function buildHtml($analysis = array(), $docPath)
     {
         $builtArray = var_export($analysis, TRUE);
 
-        if ($type === 'html') {
-            $docHtmlContent = <<<EOT
+        $docHtmlContent = <<<EOT
 <?php
 
     \$builtArrayInject = $builtArray;
@@ -351,7 +350,6 @@ Abstract Class Builder
 </html>
 EOT;
 
-            file_put_contents($docPath, $docHtmlContent);
-        }
+        file_put_contents($docPath, $docHtmlContent);
     }
 }

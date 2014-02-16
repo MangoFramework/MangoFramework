@@ -28,7 +28,7 @@ class App
         catch (controllerMapException $e) {
             self::$container['Response']->setData(array('Error' => $e->getMessage()));
         }
-        self::response(); 
+        self::response();
     }
 
     public static function init()
@@ -113,7 +113,7 @@ class App
 
     public static function autoloader()
     {
-           if (file_exists('vendors/autoload.php'))
+        if (file_exists('vendors/autoload.php'))
             require_once 'vendors/autoload.php';
         elseif (file_exists('../vendors/autoload.php'))
             require_once '../vendors/autoload.php';
