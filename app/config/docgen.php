@@ -5,13 +5,17 @@ return array(
         'folders' => array(
             'controllers',
             'factories',
-            //'!controllers/ExampleController.php',
+
+        ),
+        'exceptions' => array(
+            'controllers/AuthController.php',
+            'controllers/DocumentationController.php',
+            'controllers/DebuggerController.php',
             //'!factories/ExampleFactories.php',
         ),
-        /*'files' => array(
-            'controllers/ExampleController.php,
-            'factories/ExampleFactories.php,
-        ),*/
+        'files' => array(
+            'controllers/AuthController.php',
+        ),
     ),
     'infos' => array(
         'file' => './asset/templates/documentation.php',

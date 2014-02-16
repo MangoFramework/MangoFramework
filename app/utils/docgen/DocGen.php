@@ -23,17 +23,14 @@ Class DocGen Extends Analysis
      */
     protected $docPath;
     protected $docType;
+    protected $pathsException;
 
     public function __construct()
     {
         $config = \core\App::$container['Config']->getDocGen();
 
-        if (is_array($config['paths']) && !empty($config['paths'])) {
-            $this->filePaths = $config['paths'];
-        } else {
-            Throw New DocgenException('Invalid var type : $filePath must be an array and not be empty');
-        }
-
+        $this->filePaths = $config['paths'];
+        $this->pathsException = $config['paths']['exceptions'];
         $this->docPath = $config['infos']['file'];
         $this->docType = $config['infos']['docType'];
     }
@@ -184,41 +181,45 @@ Class DocGen Extends Analysis
             if ($type === 'folders') {
                 foreach ($filePath as $file) {
                     foreach (glob($file . '/*.php') as $k => $f) {
-                        if (($nb = count(glob($file . '/*.php'))) === ($k + 1)) {
-                            if (is_null($globKey)) {
-                                $globKey = $k;
+                        if (!in_array($f, $this->pathsException)) {
+                            if (($nb = count(glob($file . '/*.php'))) === ($k + 1)) {
+                                if (is_null($globKey)) {
+                                    $globKey = $k;
+                                } else {
+                                    $globKey++;
+                                }
                             } else {
-                                $globKey++;
+                                if (!is_null($globKey)) {
+                                    $globKey++;
+                                }
                             }
-                        } else {
-                            if (!is_null($globKey)) {
-                                $globKey++;
-                            }
-                        }
 
-                        if (file_exists($file)) {
-                            if (FALSE !== ($content = file_get_contents($f))) {
-                                $this->fileNumber = (is_null($globKey) ? $k : $globKey);
-                                $this->createDoc($content, $f);
+                            if (file_exists($file)) {
+                                if (FALSE !== ($content = file_get_contents($f))) {
+                                    $this->fileNumber = (is_null($globKey) ? $k : $globKey);
+                                    $this->createDoc($content, $f);
+                                } else {
+                                    Throw New  FilesystemException('File ' . $f . ' can\'t be read');
+                                }
                             } else {
-                                Throw New  FilesystemException('File ' . $f . ' can\'t be read');
+                                Throw New FilesystemException('File ' . $f . ' doesn\'t exist');
                             }
-                        } else {
-                            Throw New FilesystemException('File ' . $f . ' doesn\'t exist');
                         }
                     }
                 }
             } else if ($type === "files") {
                 foreach($filePath as $k => $file) {
-                    if (file_exists($filePath)) {
-                        if (FALSE !== ($content = file_get_contents($filePath))) {
-                            $this->fileNumber = $k;
-                            $this->createDoc($content, $filePath);
+                    if (!in_array($file, $this->pathsException)) {
+                        if (file_exists($file)) {
+                            if (FALSE !== ($content = file_get_contents($file))) {
+                                $this->fileNumber = $k;
+                                $this->createDoc($content, $file);
+                            } else {
+                                Throw New  FilesystemException('File ' . $file . ' can\'t be read');
+                            }
                         } else {
-                            Throw New  FilesystemException('File ' . $filePath . ' can\'t be read');
+                            Throw New FilesystemException('File ' . $file . ' doesn\'t exist');
                         }
-                    } else {
-                        Throw New FilesystemException('File ' . $filePath . ' doesn\'t exist');
                     }
                 }
             }
