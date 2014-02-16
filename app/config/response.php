@@ -2,13 +2,14 @@
 
 return array(
     'type' => 'html',
-    'prettyPrintJSON' => true,
+    'prettyPrint' => true,
     'eraseBuffer' => false,
     'REST' => array(
         'type' => 'json'
     ),
     'dieAfterResponse' => false,
-    'createXmlFile' => null,
+    'createXmlFile' => false,
     'replaceBody' => true,
-    ''
+    'htmlJSONEncode' => true,
+    'unescapedSlashes' => true
 );

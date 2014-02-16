@@ -468,10 +468,17 @@ span.ic
 
 .trResponseKey th
 {
+    text-align: center;
     border: 1px solid black;
 }
 
 .trResponseValue td
 {
     border: 1px solid black;
+}
+
+.noData
+{
+    color: #FF0000;
+    font-style: italic;
 }

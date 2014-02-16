@@ -15,13 +15,11 @@ class Response
     protected $type = 'json';
     protected $data = NULL;
     protected $defaultData = array();
-    protected $errorData = FALSE;
     protected $prettyPrint = FALSE;
-    protected $escapeSlashes = TRUE;
+    protected $unescapedSlashes = TRUE;
     protected $eraseBuffer = FALSE;
-    protected $encodedErrorData = TRUE;
     protected $dieAfterResponse = FALSE;
-    protected $createXmlFile = NULL;
+    protected $createXmlFile = FALSE;
     protected $htmlJSONEncode = TRUE;
     protected $replaceBody = TRUE;
 
@@ -119,18 +117,19 @@ class Response
             }
         }
 
-        if (!empty($config['prettyPrintJSON']))
-            $this->prettyPrint = $config['prettyPrintJSON'];
-
-        if (!empty($config['eraseBuffer']))
-            $this->eraseBuffer = $config['eraseBuffer'];
+        foreach ($config as $key => $value) {
+            if (property_exists(__CLASS__, $key)) {
+                if (!in_array($key, array('REST', 'type'))) {
+                    $this->setBool($key, $value);
+                }
+            }
+        }
     }
 
     public function setStatus($code, $add = FALSE)
     {
         if (array_key_exists($code, self::$statusCodes)) {
             $this->status = $code;
-
         } else {
             if ($add === TRUE) {
                 if (is_array($code)) {
@@ -163,7 +162,11 @@ class Response
 
     public function setType($type)
     {
-        $this->type = $type;
+        if (in_array($type, $this->validType)) {
+            $this->type = $type;
+        } else {
+            Throw new ResponseException("Invalid response format : must be 'json', 'xml' or 'html'");
+        }
 
         return $this;
     }
@@ -179,46 +182,13 @@ class Response
         return $this;
     }
 
-    public function setPrettyJSON($bool)
+    public function setBool($property, $value)
     {
-        $this->prettyPrint = $bool;
-
-        return $this;
-    }
-
-    public function setEscapeSlashes($bool)
-    {
-        $this->escapeSlashes = $bool;
-
-        return $this;
-    }
-
-    public function setEraseBuffer($bool)
-    {
-        $this->eraseBuffer = $bool;
-
-        return $this;
-    }
-
-    public function setCreateXmlFile($bool)
-    {
-        $this->createXmlFile = $bool;
-
-        return $this;
-    }
-
-    public function setHtmlJSONEncode($bool)
-    {
-        $this->htmlJSONEncode = $bool;
-
-        return $this;
-    }
-
-    public function setReplaceBody($bool)
-    {
-        $this->replaceBody = $bool;
-
-        return $this;
+        if (is_bool($value) === TRUE) {
+            $this->$property = $value;
+        } else {
+            Throw new ResponseException("Invalid var type: \$value must be a boolean");
+        }
     }
 
     public function getStatus($code = NULL, $messageOnly = FALSE)
@@ -256,8 +226,6 @@ class Response
         $this->body = '';
         $this->type = 'json';
         $this->data = NULL;
-        $this->errorData = NULL;
-        $this->encodedErrorData = TRUE;
         $this->prettyPrint = FALSE;
 
         return $this;
@@ -310,19 +278,6 @@ class Response
         return $this;
     }
 
-    public function write($body, $replace = FALSE)
-    {
-        if ($replace === TRUE) {
-            $this->body = $body;
-        } else {
-            $this->body .= $body;
-        }
-
-        $this->length = strlen($this->body);
-
-        return $this;
-    }
-
     public function xmlEncode($data, $simpleXmlElement = NULL, $file = NULL)
     {
         if (is_null($simpleXmlElement)) {
@@ -330,7 +285,7 @@ class Response
 
             $this->xmlEncode($data, $simpleXmlElement, $file);
 
-            if (!is_null($file)) {
+            if ($file !== FALSE) {
                 $simpleXmlElement->asXML($file);
             }
 
@@ -366,28 +321,38 @@ class Response
 
     public function jsonEncodeUTF8($data)
     {
-        if ($this->prettyPrint === TRUE && $this->escapeSlashes === TRUE) {
+        if ($this->prettyPrint === TRUE && $this->unescapedSlashes === TRUE) {
             $json = json_encode($data, JSON_UNESCAPED_UNICODE |
                 JSON_FORCE_OBJECT |
                 JSON_PRETTY_PRINT |
                 JSON_UNESCAPED_SLASHES);
-        } else if ($this->escapeSlashes === TRUE) {
+        } else if ($this->prettyPrint === TRUE && $this->unescapedSlashes === FALSE) {
             $json = json_encode($data, JSON_UNESCAPED_UNICODE |
-                JSON_FORCE_OBJECT |
-                JSON_UNESCAPED_SLASHES);
-        } else if ($this->prettyPrint === FALSE && $this->escapeSlashes === FALSE) {
+                JSON_PRETTY_PRINT |
+                JSON_FORCE_OBJECT);
+        } else if ($this->prettyPrint === FALSE && $this->unescapedSlashes === TRUE) {
             $json = json_encode($data, JSON_UNESCAPED_UNICODE |
+                JSON_UNESCAPED_SLASHES |
+                JSON_FORCE_OBJECT);
+        } else if ($this->prettyPrint === FALSE && $this->unescapedSlashes === FALSE) {
+            json_encode($data, JSON_UNESCAPED_UNICODE |
                 JSON_FORCE_OBJECT);
         }
 
         return $json;
     }
 
-    private function isDataError($data, $code = 400)
+    public function write($body, $replace = FALSE)
     {
-        $this->errorData = TRUE;
-        $this->code = $code;
-        return $this->jsonEncodeUTF8($data);
+        if ($replace === TRUE) {
+            $this->body = $body;
+        } else {
+            $this->body .= $body;
+        }
+
+        $this->length = strlen($this->body);
+
+        return $this;
     }
 
     public function sendHeaders()
@@ -432,8 +397,6 @@ class Response
 
     public function sendResponse($customParams = NULL)
     {
-        $this->errorData = NULL;
-
         // default param
         $params = array(
             "code" => 200,
@@ -489,7 +452,6 @@ class Response
         }
 
         // set MIME Type
-        //|| ($this->errorData === TRUE && $this->encodedErrorData === TRUE)
         if ($this->type === 'json') {
             $contentType = 'application/json';
         } else if ($this->type === 'html') {
@@ -501,7 +463,7 @@ class Response
         }
 
         // stop response if error when xml response type
-        if ($this->errorData === TRUE || $type === 'xml') {
+        if ($type === 'xml') {
             $params['die'] = TRUE;
         }
 
