@@ -433,22 +433,24 @@ class Response
         }
 
         // encode data
-        if ($params['encode'] === TRUE) {
-            if ($type === 'json') {
-                $encodedData = $this->jsonEncodeUTF8($data);
-            } else if ($type === 'html' || $type === 'plain') {
-                if (is_array($data) && $params['htmlJSONEncode'] === TRUE) {
-                    $encodedData = $this->jsonEncodeUTF8($data);
-                } else if (is_array($data) && $params['htmlJSONEncode'] === FALSE) {
-                    Throw new ResponseException('Invalid var type : $data can\'t be an array in html response mode');
-                } else if (!is_array($data)) {
-                    $encodedData = $data;
+        if (!empty($data)) {
+            if ($params['encode'] === TRUE) {
+                if ($type === 'json') {
+                    $data = $this->jsonEncodeUTF8($data);
+                } else if ($type === 'html' || $type === 'plain') {
+                    if (is_array($data) && $params['htmlJSONEncode'] === TRUE) {
+                        $data = $this->jsonEncodeUTF8($data);
+                    } else if (is_array($data) && $params['htmlJSONEncode'] === FALSE) {
+                        Throw new ResponseException('Invalid var type : $data can\'t be an array in html response mode');
+                    } else if (!is_array($data)) {
+                        $data = $data;
+                    }
+                } else if ($type === 'xml') {
+                    $data = $this->xmlEncode($data, NULL, $params['xmlFile']);
                 }
-            } else if ($type === 'xml') {
-                $encodedData = $this->xmlEncode($data, NULL, $params['xmlFile']);
             }
         } else {
-            $encodedData = $data;
+            $data = '';
         }
 
         // set MIME Type
@@ -470,7 +472,7 @@ class Response
         // send response
         $this->setStatus($this->status)
             ->setHeader('content-Type', $contentType . ' ; charset=utf-8')
-            ->write($encodedData, $params['replace'])
+            ->write($data, $params['replace'])
             ->send($params['die']);
     }
 }
